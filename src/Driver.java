@@ -1,3 +1,5 @@
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -101,7 +103,71 @@ public class Driver {
      */
     public static void main(String[] args) {
         System.out.println(Arrays.toString(args));
+        
+        ArgumentParser parser = new ArgumentParser(args);
+        DirectoryTraversal dir = new DirectoryTraversal();
+        FileParser fileParser = new FileParser();
+        
+        
+        String directory = null;
+        File directoryPath = null;
+        File outputFile = null;
+        
+      
+        System.out.println("Result: " + parser.toString());
+        
+        
+        if(parser.hasFlag(INPUT_FLAG))
+        {
+        	if(parser.hasValue(INPUT_FLAG))
+        	{
+        		directory = parser.getValue(INPUT_FLAG);
+        		directoryPath = new File(directory);
+        		if(!directoryPath.isDirectory())
+        		{
+        			System.err.println("Invalid directory");
+        		}
+        	}
+        	else
+        	{
+        		System.err.println("No directory input, please enter directory");
+        	}
+        }
+        else
+        {
+        	System.err.println("No directory found, please enter a directory");
+        }
+        
+        
+        if(parser.hasFlag(INDEX_FLAG))
+        {
+        	if(parser.getValue(INDEX_FLAG)!=null)
+        	{
+        		File inputFile = new File(parser.getValue(INDEX_FLAG));
+            	if(!inputFile.isFile())
+            	{
+            		System.err.println("Invalid file");
+            	}
+            	outputFile = inputFile;
+        	}
+        	else
+        	{
+        		System.out.println("Index flag value = null");
+        		outputFile = new File("/users/Marissa/Documents/CS212/untitled Folder/"
+                		+ "cs212-mjmasangcay-project/index.json");
+        	}
+        	System.out.println("Output file = "+ outputFile.toString());
+        }
 
+        
+        dir.traverseDir(directoryPath);
+        
+        fileParser.printIndex();
+        
+       
+        
+      
+      
         // TODO Fill this in and add additional methods and classes as
         // necessary.
     }
