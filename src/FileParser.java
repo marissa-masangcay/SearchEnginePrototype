@@ -148,7 +148,7 @@ public class FileParser {
 		{
 			System.out.println(test[i]);
 		}
-		writeNestedObject("/users/Marissa/Documents/CS212/untitled Folder/"
+		writeNestedObject("/users/Marissa/Documents/CS212/"
         		+ "cs212-mjmasangcay-project/index.json", index);
 
 	}
@@ -193,6 +193,7 @@ public class FileParser {
 			//if elements is not empty
 			if(!elements.isEmpty())
 			{
+				//String word
 				Entry<String, TreeMap<String, TreeSet<Integer>>> first = elements.firstEntry();
 //				bufferedWriter.write(indent(1));
 //				bufferedWriter.write(quote(first.getKey()));
@@ -204,6 +205,7 @@ public class FileParser {
 				//if first element is not empty
 				if(!first.getValue().isEmpty())
 				{
+					//String text file name
 					Entry<String, TreeSet<Integer>> firstEntry = first.getValue().firstEntry(); 
 //					bufferedWriter.write(System.lineSeparator());
 //					bufferedWriter.write(indent(2)+quote(firstEntry.getKey()));
@@ -226,7 +228,8 @@ public class FileParser {
 				}
 
 
-				
+				//String word
+				int counter3 = 0;
 				for (Entry<String, TreeMap<String, TreeSet<Integer>>> entry: elements.tailMap(first.getKey(), true).entrySet())
 				{
 					bufferedWriter.write(System.lineSeparator());
@@ -238,9 +241,10 @@ public class FileParser {
 					
 					//INSERT HERE
 					
-//					writeNestedObject2(output, entry.getValue().firstEntry().getValue());
+//					writeNestedObject2(output, entry.getValue());
 
 					int counter1 = 0;
+					//String text file name
 					for(Entry<String, TreeSet<Integer>> secondEntry: entry.getValue().entrySet())
 					{
 						bufferedWriter.write(System.lineSeparator());
@@ -252,10 +256,13 @@ public class FileParser {
 						Integer firstInt = entry.getValue().firstEntry().getValue().first(); 
 //						bufferedWriter.write(System.lineSeparator());
 //						bufferedWriter.write(indent(3)+firstInt);
+						
 						int counter2 = 0;
-						for(Integer thirdEntry: secondEntry.getValue().tailSet(entry.getValue().firstEntry().getValue().first(), true))
+						//Int position
+						for(Integer thirdEntry: secondEntry.getValue().tailSet(secondEntry.getValue().iterator().next(), true))
+						//for(Integer thirdEntry: secondEntry.getValue().tailSet(entry.getValue().firstEntry().getValue().first(), true))
 						{
-							if(counter2!=0)
+							if(counter2!=0 && counter2!= entry.getValue().firstEntry().getValue().size())
 							{
 								bufferedWriter.write(",");
 							}
@@ -265,18 +272,25 @@ public class FileParser {
 	                		counter2++;
 						}
 						bufferedWriter.write(System.lineSeparator());
-						bufferedWriter.write(indent(3));
+						bufferedWriter.write(indent(2));
 						bufferedWriter.write("]");
 						counter1++;
+						if(entry.getValue().size()>1 && counter1<entry.getValue().size())
+						{
+							bufferedWriter.write(",");
+						}
 					}
 					bufferedWriter.write(System.lineSeparator());
-					bufferedWriter.write(indent(2));
+					bufferedWriter.write(indent(1));
 					bufferedWriter.write("}");
+					counter3++;
+					if(elements.size()>1 && counter3<elements.size())
+					{
+						bufferedWriter.write(",");
+					}
 				}
 				bufferedWriter.write(System.lineSeparator());
-				bufferedWriter.write(indent(1));
-				bufferedWriter.write("]");
-				bufferedWriter.write(System.lineSeparator());
+				bufferedWriter.write(indent(0));
 
 			}
 			bufferedWriter.write("}");
@@ -293,84 +307,6 @@ public class FileParser {
 
 	}
 	
-	public static boolean writeNestedObject2(String output, TreeMap<String, TreeSet<Integer>> elements) {
-        boolean status = true;
-        FileWriter fileWriter;
-        
-        try{
-        	
-            fileWriter = new FileWriter(output);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            
-            bufferedWriter.write("{");
-            bufferedWriter.write(System.lineSeparator());
-            
-            if(!elements.isEmpty())
-            {
-            	Entry<String, TreeSet<Integer>> first = elements.firstEntry();
-            	bufferedWriter.write(indent(1));
-    			bufferedWriter.write(quote(first.getKey()));
-    	    	bufferedWriter.write(":");
-    	    	bufferedWriter.write(" ");
-    	    	bufferedWriter.write("[");
-    	        
-                if(!first.getValue().isEmpty())
-                {
-                	Integer firstInt = first.getValue().first(); 
-                	bufferedWriter.write(System.lineSeparator());
-                	bufferedWriter.write(indent(2)+firstInt);
-                	for (Integer entry: first.getValue().tailSet(firstInt, false))
-                    {
-                		bufferedWriter.write(",");
-                		bufferedWriter.write("\n");
-                		bufferedWriter.write(indent(2)+entry);
-                    }
-                	if(elements.firstEntry().getValue().size()>1)
-                	{
-                		bufferedWriter.write("\n");
-                		bufferedWriter.write(indent(1)+"]");
-                	}
-                }
-                
-            	
-            	for (Entry<String, TreeSet<Integer>> entry: elements.tailMap(first.getKey(), false).entrySet())
-                {
-                	bufferedWriter.write(",");
-                	bufferedWriter.write(System.lineSeparator());
-                	bufferedWriter.write(indent(1));
-        			bufferedWriter.write(quote(entry.getKey()));
-        	    	bufferedWriter.write(":");
-        	    	bufferedWriter.write(" ");
-        	    	
-        	    	bufferedWriter.write("[");
-        	    	Integer secondInt = entry.getValue().first(); 
-                	bufferedWriter.write(System.lineSeparator());
-                	bufferedWriter.write(indent(2)+secondInt);
-        	    	for (Integer entry2: entry.getValue().tailSet(entry.getValue().first(), false))
-                    {
-                		bufferedWriter.write(",");
-                		bufferedWriter.write("\n");
-                		bufferedWriter.write(indent(2)+entry2);
-                    }
-                }
-            	bufferedWriter.write("\n");
-            	bufferedWriter.write(indent(1));
-            	bufferedWriter.write("]");
-            	bufferedWriter.write(System.lineSeparator());
-
-            }
-            bufferedWriter.write("}");
-            bufferedWriter.close();	
-            
-            
-            
-        }catch (IOException e){
-        	status = false;
-        	System.err.println("Problem writing to the file: "+output);
-        }
-
-        return status;
-    }
 
 
 }

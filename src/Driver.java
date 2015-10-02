@@ -153,8 +153,8 @@ public class Driver {
         	else
         	{
         		System.out.println("Index flag value = null");
-        		outputFile = new File("/users/Marissa/Documents/CS212/untitled Folder/"
-                		+ "cs212-mjmasangcay-project/index.json");
+        		outputFile = new File("/users/Marissa/Documents/CS212/"
+        				+ "cs212-mjmasangcay-project/index.json");
         	}
         	System.out.println("Output file = "+ outputFile.toString());
         }
