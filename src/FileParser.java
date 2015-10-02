@@ -126,14 +126,12 @@ public class FileParser {
 				
 				for(int i = 0; i<splitLine.length; i++)
 				{
-//					counter++;
 					String word = clean(splitLine[i]);
 					if(!word.isEmpty())
 					{
 						counter++;
 						add(word, inputFile.getPath(), counter);
 					}
-//					add(splitLine[i], inputFile.getPath(), counter);
 				}
 			
 			}
@@ -148,8 +146,6 @@ public class FileParser {
 	
 	public static void printIndex(String file)
 	{
-//		writeNestedObject("/users/Marissa/Documents/CS212/"
-//        		+ "cs212-mjmasangcay-project/index.json", index);
 		writeNestedObject(file, index);
 		
 	}
@@ -183,38 +179,6 @@ public class FileParser {
 			{
 				//String word
 				Entry<String, TreeMap<String, TreeSet<Integer>>> first = elements.firstEntry();
-//				bufferedWriter.write(indent(1));
-//				bufferedWriter.write(quote(first.getKey()));
-//				bufferedWriter.write(":");
-//				bufferedWriter.write(" ");
-//				bufferedWriter.write("{");
-				
-
-				//if first element is not empty
-				if(!first.getValue().isEmpty())
-				{
-					//String text file name
-					Entry<String, TreeSet<Integer>> firstEntry = first.getValue().firstEntry(); 
-//					bufferedWriter.write(System.lineSeparator());
-//					bufferedWriter.write(indent(2)+quote(firstEntry.getKey()));
-//					bufferedWriter.write(":");
-//					bufferedWriter.write(" ");
-//					bufferedWriter.write("[");
-//					bufferedWriter.write(System.lineSeparator());
-//					bufferedWriter.write(indent(3)+firstEntry.getValue().first());
-					for (Integer intEntry: firstEntry.getValue().tailSet(firstEntry.getValue().first(), false))
-					{
-//						bufferedWriter.write(",");
-//						bufferedWriter.write("\n");
-//						bufferedWriter.write(indent(3)+intEntry);
-					}
-					if(elements.firstEntry().getValue().size()>1)
-					{
-//						bufferedWriter.write("\n");
-//						bufferedWriter.write(indent(1)+"]");
-					}
-				}
-
 
 				//String word
 				int counter3 = 0;

@@ -161,15 +161,12 @@ public class Driver {
             	}
             	else
             	{
-//            		outputFile = new File("/users/Marissa/Documents/CS212/"
-//            				+ "cs212-mjmasangcay-project/index.json");
             		outputFile = new File(INDEX_DEFAULT);
             		
             	}
             }
-            
-            
 
+            
             if(hasDirectory = true)
             {
             	dir.traverseDir(directoryPath);
