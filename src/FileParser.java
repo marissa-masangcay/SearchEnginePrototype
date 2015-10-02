@@ -34,7 +34,7 @@ public class FileParser {
     
     public static String clean(String text) {
         text = text.toLowerCase().trim();
-        text = text.replaceAll(CLEAN_REGEX, "");
+        text = text.replaceAll(CLEAN_REGEX,"");
         return text;
     }
     
@@ -126,8 +126,14 @@ public class FileParser {
 				
 				for(int i = 0; i<splitLine.length; i++)
 				{
-					counter++;
-					add(splitLine[i], inputFile.getName(), counter);
+//					counter++;
+					String word = clean(splitLine[i]);
+					if(!word.isEmpty())
+					{
+						counter++;
+						add(word, inputFile.getPath(), counter);
+					}
+//					add(splitLine[i], inputFile.getPath(), counter);
 				}
 			
 			}
@@ -140,17 +146,12 @@ public class FileParser {
 	}
 	
 	
-	public static void printIndex()
+	public static void printIndex(String file)
 	{
-		Object[] test = index.entrySet().toArray();
+//		writeNestedObject("/users/Marissa/Documents/CS212/"
+//        		+ "cs212-mjmasangcay-project/index.json", index);
+		writeNestedObject(file, index);
 		
-		for(int i = 0; i<test.length; i++)
-		{
-			System.out.println(test[i]);
-		}
-		writeNestedObject("/users/Marissa/Documents/CS212/"
-        		+ "cs212-mjmasangcay-project/index.json", index);
-
 	}
 	
 	
@@ -163,20 +164,7 @@ public class FileParser {
 	public static String quote(String text) {
 		return "\"" + text + "\"";
 	}
-	
-	
-	private static boolean outputPair(Entry<String, Integer> entry, BufferedWriter bw, Boolean status) {
-		try {
-			bw.write(indent(1));
-			bw.write(quote(entry.getKey()));
-			bw.write(": ");
-			bw.write(entry.getValue().toString());
-		} catch (IOException e) {
-			status = false;
-			System.err.println("Could not print output pair");
-		}
-		return status;
-	}
+
 	
 	public static boolean writeNestedObject(String output, TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements) {
 		boolean status = true;
@@ -239,9 +227,6 @@ public class FileParser {
 					bufferedWriter.write(" ");
 					bufferedWriter.write("{");
 					
-					//INSERT HERE
-					
-//					writeNestedObject2(output, entry.getValue());
 
 					int counter1 = 0;
 					//String text file name
@@ -253,24 +238,20 @@ public class FileParser {
 						bufferedWriter.write(":");
 						bufferedWriter.write(" ");
 						bufferedWriter.write("[");
-						Integer firstInt = entry.getValue().firstEntry().getValue().first(); 
-//						bufferedWriter.write(System.lineSeparator());
-//						bufferedWriter.write(indent(3)+firstInt);
 						
 						int counter2 = 0;
 						//Int position
 						for(Integer thirdEntry: secondEntry.getValue().tailSet(secondEntry.getValue().iterator().next(), true))
-						//for(Integer thirdEntry: secondEntry.getValue().tailSet(entry.getValue().firstEntry().getValue().first(), true))
 						{
-							if(counter2!=0 && counter2!= entry.getValue().firstEntry().getValue().size())
+							if(counter2!=0 && counter2< secondEntry.getValue().size())
 							{
 								bufferedWriter.write(",");
 							}
-//							bufferedWriter.write(",");
 	                		bufferedWriter.write(System.lineSeparator());
 	                		bufferedWriter.write(indent(3)+thirdEntry);
 	                		counter2++;
 						}
+						
 						bufferedWriter.write(System.lineSeparator());
 						bufferedWriter.write(indent(2));
 						bufferedWriter.write("]");
@@ -280,6 +261,7 @@ public class FileParser {
 							bufferedWriter.write(",");
 						}
 					}
+					
 					bufferedWriter.write(System.lineSeparator());
 					bufferedWriter.write(indent(1));
 					bufferedWriter.write("}");
@@ -288,6 +270,7 @@ public class FileParser {
 					{
 						bufferedWriter.write(",");
 					}
+					
 				}
 				bufferedWriter.write(System.lineSeparator());
 				bufferedWriter.write(indent(0));

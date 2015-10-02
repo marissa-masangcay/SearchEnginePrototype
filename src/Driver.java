@@ -102,73 +102,87 @@ public class Driver {
      *            set of flag and value pairs
      */
     public static void main(String[] args) {
-        System.out.println(Arrays.toString(args));
         
         ArgumentParser parser = new ArgumentParser(args);
         DirectoryTraversal dir = new DirectoryTraversal();
         FileParser fileParser = new FileParser();
+        
+        boolean hasIndex = false;
+        boolean hasDirectory = false;
         
         
         String directory = null;
         File directoryPath = null;
         File outputFile = null;
         
-      
-        System.out.println("Result: " + parser.toString());
         
         
-        if(parser.hasFlag(INPUT_FLAG))
-        {
-        	if(parser.hasValue(INPUT_FLAG))
-        	{
-        		directory = parser.getValue(INPUT_FLAG);
-        		directoryPath = new File(directory);
-        		if(!directoryPath.isDirectory())
-        		{
-        			System.err.println("Invalid directory");
-        		}
-        	}
-        	else
-        	{
-        		System.err.println("No directory input, please enter directory");
-        	}
-        }
-        else
-        {
-        	System.err.println("No directory found, please enter a directory");
-        }
-        
-        
-        if(parser.hasFlag(INDEX_FLAG))
-        {
-        	if(parser.getValue(INDEX_FLAG)!=null)
-        	{
-        		File inputFile = new File(parser.getValue(INDEX_FLAG));
-            	if(!inputFile.isFile())
-            	{
-            		System.err.println("Invalid file");
-            	}
-            	outputFile = inputFile;
-        	}
-        	else
-        	{
-        		System.out.println("Index flag value = null");
-        		outputFile = new File("/users/Marissa/Documents/CS212/"
-        				+ "cs212-mjmasangcay-project/index.json");
-        	}
-        	System.out.println("Output file = "+ outputFile.toString());
-        }
 
-        
-        dir.traverseDir(directoryPath);
-        
-        fileParser.printIndex();
-        
-       
-        
-      
-      
-        // TODO Fill this in and add additional methods and classes as
-        // necessary.
+        try{
+         
+            //input = directory to traverse through
+            //if args has input 
+            if(parser.hasFlag(INPUT_FLAG))
+            {
+            	if(parser.hasValue(INPUT_FLAG))
+            	{
+            		directory = parser.getValue(INPUT_FLAG);
+            		directoryPath = new File(directory);
+            		hasDirectory = true;
+            		if(!directoryPath.isDirectory())
+            		{
+            			hasDirectory = false;
+            			System.err.println("Invalid directory");
+            		}
+            	}
+            	else
+            	{
+            		System.err.println("No directory input, please enter directory");
+            	}
+            	
+            }
+            else if(!parser.hasFlag(INPUT_FLAG))
+            {
+            	System.err.println("No directory found, please enter a directory");
+            }
+            
+            //index = file name to print to
+            if(parser.hasFlag(INDEX_FLAG))
+            {
+            	hasIndex = true;
+            	if(parser.getValue(INDEX_FLAG)!=null)
+            	{
+            		File inputFile = new File(parser.getValue(INDEX_FLAG));
+                	if(!inputFile.isFile())
+                	{
+                		System.err.println("Invalid file");
+                	}
+                	outputFile = inputFile;
+            	}
+            	else
+            	{
+//            		outputFile = new File("/users/Marissa/Documents/CS212/"
+//            				+ "cs212-mjmasangcay-project/index.json");
+            		outputFile = new File(INDEX_DEFAULT);
+            		
+            	}
+            }
+            
+            
+
+            if(hasDirectory = true)
+            {
+            	dir.traverseDir(directoryPath);
+            }
+
+            
+            if(hasIndex == true)
+            {
+            	fileParser.printIndex(outputFile.toString());
+            }
+        }catch(NullPointerException e){
+        	System.err.println("Null pointer exception");
+        }
+        	
     }
 }
