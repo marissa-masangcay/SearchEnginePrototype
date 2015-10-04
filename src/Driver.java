@@ -103,83 +103,72 @@ public class Driver {
      */
     public static void main(String[] args) {
         
-        ArgumentParser parser = new ArgumentParser(args);
-        DirectoryTraversal dir = new DirectoryTraversal();
+        ArgumentParser argumentParser = new ArgumentParser(args);
+        DirectoryTraversal directoryTraverser = new DirectoryTraversal();
         FileParser fileParser = new FileParser();
-        
-        boolean hasIndex = false;
-        boolean hasDirectory = false;
-        
-        
-        String directory = null;
+               
+        String directoryToTraverse = null;
         File directoryPath = null;
         File outputFile = null;
-        
-        
-        
 
         try{
          
             //input = directory to traverse through
-            //if args has input 
-            if(parser.hasFlag(INPUT_FLAG))
+        	//if args has an input flag
+            if(argumentParser.hasFlag(INPUT_FLAG))
             {
-            	if(parser.hasValue(INPUT_FLAG))
+            	//if input flag has a value
+            	if(argumentParser.hasValue(INPUT_FLAG))
             	{
-            		directory = parser.getValue(INPUT_FLAG);
-            		directoryPath = new File(directory);
-            		hasDirectory = true;
+            		directoryToTraverse = argumentParser.getValue(INPUT_FLAG);
+            		directoryPath = new File(directoryToTraverse);
+            		//if directory isn't a valid directory
             		if(!directoryPath.isDirectory())
             		{
-            			hasDirectory = false;
             			System.err.println("Invalid directory");
             		}
             	}
-            	else
+            	else //if input flag has no value
             	{
-            		System.err.println("No directory input, please enter directory");
-            	}
-            	
+            		System.err.println("No directory entered, please enter valid directory");
+            	}	
             }
-            else if(!parser.hasFlag(INPUT_FLAG))
+            //if args has no input flag
+            else if(!argumentParser.hasFlag(INPUT_FLAG))
             {
             	System.err.println("No directory found, please enter a directory");
             }
             
             //index = file name to print to
-            if(parser.hasFlag(INDEX_FLAG))
+            //if args has an index flag
+            if(argumentParser.hasFlag(INDEX_FLAG))
             {
-            	hasIndex = true;
-            	if(parser.getValue(INDEX_FLAG)!=null)
+            	//if index flag has a value
+            	if(argumentParser.getValue(INDEX_FLAG)!=null)
             	{
-            		File inputFile = new File(parser.getValue(INDEX_FLAG));
+            		File inputFile = new File(argumentParser.getValue(INDEX_FLAG));
+            		//if index flag value is not valid
                 	if(!inputFile.isFile())
                 	{
                 		System.err.println("Invalid file");
                 	}
                 	outputFile = inputFile;
             	}
+            	//if index flag has no value
             	else
             	{
             		outputFile = new File(INDEX_DEFAULT);
-            		
             	}
             }
 
+            //Traverses through the directory given by user
+            directoryTraverser.traverseDir(directoryPath);
             
-            if(hasDirectory = true)
-            {
-            	dir.traverseDir(directoryPath);
-            }
-
+            //Writes to the appropriate text file, if provided
+            fileParser.writeIndex(outputFile.toString());
             
-            if(hasIndex == true)
-            {
-            	fileParser.printIndex(outputFile.toString());
-            }
         }catch(NullPointerException e){
         	System.err.println("Null pointer exception");
         }
-        	
     }
 }
