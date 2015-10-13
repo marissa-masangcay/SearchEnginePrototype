@@ -1,16 +1,16 @@
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * This class instantiates a private map that will store the user input
+ * given through the command line arguments, assuming that the input is valid.
+ */
 public class ArgumentParser {
-	
-	/**
-	 * This class instantiates a private map that will store the user input
-	 * given through the command line arguments, assuming that the input is valid.
-	 */
 
 	
 	/** Stores arguments in a map, where the key is a flag. */
-	private Map<String, String> argumentMap;
+	private final Map<String, String> argumentMap;
 
 	
 	/**
@@ -52,21 +52,21 @@ public class ArgumentParser {
 	public void parseArguments(String[] args) {
 		for (int i = 0; i < args.length; i++)
 		{			
-			if(args[i].startsWith("-"))
+			if(isFlag(args[i]))
 			{
-				if(i==args.length-1)
+				if(i == (args.length-1))
 				{
 					argumentMap.put(args[i], null);
 				}
 				else
 				{
-					if(!args[i+1].startsWith("-"))
+					if(!isFlag(args[i+1]))
 					{
 						argumentMap.put(args[i], args[i+1]);
 						i++;
 					}
 
-					else if(args[i+1].startsWith("-"))
+					else if(isFlag(args[i+1]))
 					{
 						argumentMap.put(args[i], null);
 					}
@@ -88,12 +88,7 @@ public class ArgumentParser {
 	public static boolean isFlag(String arg) {
 		String trimmedArg = arg.trim();
 		
-		if(trimmedArg.startsWith("-") && trimmedArg.length()>1)
-		{
-			return true;
-		}
-		else
-			return false;
+		return (trimmedArg.startsWith("-") && trimmedArg.length()>1);	
 	}
 
 	
@@ -126,8 +121,7 @@ public class ArgumentParser {
 	 * @return number of flags
 	 */
 	public int numFlags() {
-		int numberOfFlags = argumentMap.size();
-		return numberOfFlags;
+		return argumentMap.size();
 	}
 
 	

@@ -1,4 +1,8 @@
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -100,19 +104,19 @@ public class Driver {
      * 
      * @param args
      *            set of flag and value pairs
+     * @throws IOException 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         
         ArgumentParser argumentParser = new ArgumentParser(args);
         DirectoryTraversal directoryTraverser = new DirectoryTraversal();
         FileParser fileParser = new FileParser();
                
         String directoryToTraverse = null;
-        File directoryPath = null;
         File outputFile = null;
+        Path directory = null;
 
-        try{
-         
+        try{        
             //input = directory to traverse through
         	//if args has an input flag
             if(argumentParser.hasFlag(INPUT_FLAG))
@@ -121,9 +125,9 @@ public class Driver {
             	if(argumentParser.hasValue(INPUT_FLAG))
             	{
             		directoryToTraverse = argumentParser.getValue(INPUT_FLAG);
-            		directoryPath = new File(directoryToTraverse);
+            		directory = FileSystems.getDefault().getPath(directoryToTraverse);
             		//if directory isn't a valid directory
-            		if(!directoryPath.isDirectory())
+            		if(!Files.isDirectory(directory))
             		{
             			System.err.println("Invalid directory");
             		}
@@ -162,13 +166,16 @@ public class Driver {
             }
 
             //Traverses through the directory given by user
-            directoryTraverser.traverseDir(directoryPath);
+            directoryTraverser.traverseDir(directory);
             
+            System.out.println(outputFile.toString());
             //Writes to the appropriate text file, if provided
             fileParser.writeIndex(outputFile.toString());
+            
             
         }catch(NullPointerException e){
         	System.err.println("Null pointer exception");
         }
+        
     }
 }
