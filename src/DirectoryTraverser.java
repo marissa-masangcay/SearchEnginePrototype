@@ -1,15 +1,10 @@
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.stream.Stream;
 
-import javax.swing.text.html.HTMLDocument.Iterator;
 
-public class DirectoryTraversal {
+public class DirectoryTraverser {
 
 	/**
 	 * This class provides the method to recursively traverse through the 
@@ -18,32 +13,27 @@ public class DirectoryTraversal {
 	 */
 
 
-	/** Instantiates file parser to be called by the method {@link #traverseDir(File directory)}. */
-	private static FileParser fileParser;
-
-
 	/**
-	 * Initializes an empty file parser. 
+	 * Initializes an empty Directory Traverser. 
 	 * @return 
 	 */
-	public DirectoryTraversal() {
-		fileParser = new FileParser();
+	public DirectoryTraverser() {
 	}
 
 
 	/**
 	 * Traverses the directory passed in from args to attempt to 
 	 * find and extract text files from.
-	 * Uses {@link #fileParser.readFile(String file)} to 
+	 * Uses {@link #fileParser.invertedIndexBuilder(String file)} to 
 	 * read and add to the map each text file found.
 	 *
 	 * @param directory input directory from command line args
 	 * @return 
 	 * @throws IOException 
-	 * @see #fileParser.readFile(String file)
+	 * @see #fileParser.invertedIndexBuilder(String file)
 	 */
 
-	public static void traverseDir(Path directory) throws IOException{
+	public static void traverse(Path directory, InvertedIndex invertedIndex) throws IOException{
 
 		//Executed if directory is a directory	
 		if(Files.isDirectory(directory))
@@ -52,18 +42,20 @@ public class DirectoryTraversal {
 			{
 				for(Path directoryPaths: directoryStream)
 				{
-					traverseDir(directoryPaths);
+					traverse(directoryPaths, invertedIndex);
 				}	
 			}
 		}
 
+		//Executed if a file
 		else
 		{
 			String fileName = directory.toString().toLowerCase();
 
 			if(fileName.endsWith("txt"))
 			{
-				fileParser.readFile(directory.toString());
+				//Reads file and adds words read to inverted index data structure
+				invertedIndex.invertedIndexBuilder(directory.toString());
 			}
 		}
 

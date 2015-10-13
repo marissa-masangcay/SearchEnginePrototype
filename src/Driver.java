@@ -3,8 +3,6 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This software driver class provides a consistent entry point for the search
@@ -109,8 +107,8 @@ public class Driver {
     public static void main(String[] args) throws IOException {
         
         ArgumentParser argumentParser = new ArgumentParser(args);
-        DirectoryTraversal directoryTraverser = new DirectoryTraversal();
-        FileParser fileParser = new FileParser();
+        DirectoryTraverser directoryTraverser = new DirectoryTraverser();
+        InvertedIndex invertedIndex = new InvertedIndex();
                
         String directoryToTraverse = null;
         File outputFile = null;
@@ -150,13 +148,13 @@ public class Driver {
             	//if index flag has a value
             	if(argumentParser.getValue(INDEX_FLAG)!=null)
             	{
-            		File inputFile = new File(argumentParser.getValue(INDEX_FLAG));
+            		File userInputFile = new File(argumentParser.getValue(INDEX_FLAG));
             		//if index flag value is not valid
-                	if(!inputFile.isFile())
+                	if(!userInputFile.isFile())
                 	{
                 		System.err.println("Invalid file");
                 	}
-                	outputFile = inputFile;
+                	outputFile = userInputFile;
             	}
             	//if index flag has no value
             	else
@@ -166,11 +164,10 @@ public class Driver {
             }
 
             //Traverses through the directory given by user
-            directoryTraverser.traverseDir(directory);
+            directoryTraverser.traverse(directory, invertedIndex);
             
-            System.out.println(outputFile.toString());
             //Writes to the appropriate text file, if provided
-            fileParser.writeIndex(outputFile.toString());
+            invertedIndex.writeIndex(outputFile.toString());
             
             
         }catch(NullPointerException e){
