@@ -7,6 +7,8 @@ output/
 /*.json
 /bin/
 /bin/
+<<<<<<< HEAD
+=======
 /bin/
 /bin/
 /bin/
@@ -16,4 +18,6 @@ output/
 /bin/
 /bin/
 /bin/
+/bin/
+>>>>>>> e7c132702de3954bbdfbcba83efc085e0bf6e02e
 /bin/
