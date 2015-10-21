@@ -12,7 +12,7 @@ public class DirectoryTraverser {
 	 * of the text files located in the given directory.
 	 */
 
-
+	// TODO Can remove constructor entirely.
 	/**
 	 * Initializes an empty Directory Traverser. 
 	 * @return 
@@ -32,7 +32,6 @@ public class DirectoryTraverser {
 	 * @throws IOException 
 	 * @see #fileParser.invertedIndexBuilder(String file)
 	 */
-
 	public static void traverse(Path directory, InvertedIndex invertedIndex) throws IOException{
 
 		//Executed if directory is a directory	
