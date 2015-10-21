@@ -23,17 +23,18 @@ public class InvertedIndex {
 	  * value for the text file in the second nested map.
 	  */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	private final JSONWriter jsonWriter;
+	private final JSONWriter jsonWriter; // TODO Can delete
 
 	
 	/** Instantiates the inverted index */
 	public InvertedIndex()
 	{
 		index = new TreeMap<String, TreeMap<String, TreeSet<Integer>>>();
-		jsonWriter = new JSONWriter();
+		jsonWriter = new JSONWriter(); // TODO Remove
 	}
 
-	
+
+	// TODO Move regex to JSONWriter	
 	/** Regular expression for removing special characters. */
 	public static final String CLEAN_REGEX = "(?U)[^\\p{Alnum}\\p{Space}]+";
 
@@ -41,7 +42,7 @@ public class InvertedIndex {
 	/** Regular expression for splitting text into words by whitespace. */
 	public static final String SPLIT_REGEX = "(?U)\\p{Space}+";
 
-
+	// TODO Remove or move clean() and split
 	
 	/**
 	 * Cleans a word by converting it to lowercase and removing any whitespace
@@ -97,6 +98,7 @@ public class InvertedIndex {
 	 */
 	public void add(String word, String text, int position)
 	{
+		// TODO Clean elsewhere 
 		//Cleans word
 		String cleanedWord = clean(word);
 
@@ -151,7 +153,13 @@ public class InvertedIndex {
 		}
 	}
 
-
+	/* TODO 
+	Move elsewhere...
+	Create a "builder" class that parses files... parseFile(Path file, InvertedIndex index)
+	Add your regexs, split, clean methods to the builder.
+	Or, combine with DirectoryTraverse and call that a "builder" of some sort as well.
+	*/
+		
 	/**
 	 * Reads in a file to parse words and add them at their positions found
 	 * along with text file's name to the inverted index. 
@@ -163,6 +171,8 @@ public class InvertedIndex {
 	public void invertedIndexBuilder(String file){
 		int position = 0;
 
+		// TODO Try-with-resources and Path class instead of File
+		// TODO https://docs.oracle.com/javase/tutorial/essential/io/file.html#textfiles
 		try{
 			File inputFile = new File(file);
 			BufferedReader bufferedReader = new BufferedReader(
@@ -189,6 +199,7 @@ public class InvertedIndex {
 			}
 			bufferedReader.close();
 		} catch (IOException e) {
+			// TODO Better exception handling or throw to Driver and handle there
 			e.printStackTrace();
 		}
 	}
@@ -210,6 +221,7 @@ public class InvertedIndex {
 		writeIndexToFile(file, index);
 	}
 	
+	// TODO Combine writeIndex and writeIndexToFile
 	
 	/**
 	 * Writes the elements as a JSON object with nested array values to the
@@ -232,12 +244,20 @@ public class InvertedIndex {
 				)
 
 		{
+			// TODO JSONWriter.toJSON(...)
 			jsonWriter.toJSON(inputFile.toString(), index, bufferedWriter);
 		}
 
 	}
 
+	/* TODO More general...
+	boolean hasWord(String word)
+	boolean hasPath(String word, String path)
+	etc.
+	toString()
 	
+	addAll(...)
+	*/
 
 }
 

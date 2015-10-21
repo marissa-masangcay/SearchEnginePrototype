@@ -62,7 +62,7 @@ public class ArgumentParser {
 				{
 					if(!isFlag(args[i+1]))
 					{
-						argumentMap.put(args[i], args[i+1]);
+						argumentMap.put(args[i], args[i + 1]); // TODO Spaces
 						i++;
 					}
 
@@ -88,7 +88,7 @@ public class ArgumentParser {
 	public static boolean isFlag(String arg) {
 		String trimmedArg = arg.trim();
 		
-		return (trimmedArg.startsWith("-") && trimmedArg.length()>1);	
+		return (trimmedArg.startsWith("-") && trimmedArg.length() > 1);	// TODO Spaces around operators like >
 	}
 
 	
@@ -104,6 +104,7 @@ public class ArgumentParser {
 	public static boolean isValue(String arg) {
 		String trimmedArg = arg.trim();
 		
+		// TODO Convert into one-line, etc.
 		if(!trimmedArg.startsWith("-") && !trimmedArg.isEmpty())
 		{
 			return true;
@@ -133,12 +134,12 @@ public class ArgumentParser {
 	 * does not exist or does not have a value
 	 */
 	public boolean hasFlag(String flag) {
-		if(argumentMap.containsKey(flag))
+		// TODO Space between keyword and ()
+		if (argumentMap.containsKey(flag))
 		{
 			return true;
 		}
-
-		else
+		else // TODO No blank line before else
 		{
 			return false;
 		}
@@ -152,7 +153,7 @@ public class ArgumentParser {
 	 * @return true if the flag exists and has a non-null non-empty value
 	 */
 	public boolean hasValue(String flag) {
-		if(argumentMap.containsKey(flag))
+		if (argumentMap.containsKey(flag))
 		{
 			String flagValue = argumentMap.get(flag);
 			if(flagValue != null)
