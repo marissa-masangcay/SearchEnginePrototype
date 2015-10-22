@@ -6,9 +6,9 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
 
 
 public class InvertedIndex {
@@ -123,15 +123,60 @@ public class InvertedIndex {
 
 	}
 
-
-	/* TODO More general...
-	boolean hasWord(String word)
-	boolean hasPath(String word, String path)
-	etc.
-	toString()
 	
-	addAll(...)
-	*/
+	/**
+	 * Checks to see if the inverted index contains word 
+	 * 
+	 * @param word
+	 *            word to check
+	 * @return true if index contains word
+	 */
+	public boolean hasWord(String word)
+	{
+		return index.containsKey(word);
+	}
+	
+	
+	/**
+	 * Checks to see if given path is contained within given word 
+	 * 
+	 * @param word
+	 *            word to check to see if it contains the given path
+	 * @param path
+	 *            path to check for in given word
+	 * @return true if path was found in word's map
+	 */
+	public boolean hasPath(String word, String path)
+	{
+		return index.get(word).containsValue(path);
+	}
+
+	
+	/**
+	 * Adds all words within the given array list to the inverted index 
+	 * 
+	 * @param wordsToAdd
+	 *            words to add to inverted index
+	 */
+	public void addAll(ArrayList<String> wordsToAdd)
+	{
+		for(int i = 0; i < wordsToAdd.size(); i++)
+		{
+			index.put(wordsToAdd.get(i), null);
+		}
+	}
+	
+
+	/**
+	 * Prints inverted index to string 
+	 * 
+	 * @return inverted index converted to string
+	 */
+	public String toString()
+	{
+		return index.toString();
+	}
+
 
 }
 
