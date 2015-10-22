@@ -1,8 +1,7 @@
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * This software driver class provides a consistent entry point for the search
@@ -107,12 +106,12 @@ public class Driver {
     public static void main(String[] args) throws IOException {
         
         ArgumentParser argumentParser = new ArgumentParser(args);
-        DirectoryTraverser directoryTraverser = new DirectoryTraverser(); // TODO Remove
         InvertedIndex invertedIndex = new InvertedIndex();
+        InvertedIndexBuilder invertedIndexBuilder = new InvertedIndexBuilder();
                
         String directoryToTraverse = null;
-        File outputFile = null;
         Path directory = null;
+        Path outputFile = null;
 
         try{        
             //input = directory to traverse through
@@ -123,9 +122,8 @@ public class Driver {
             	if(argumentParser.hasValue(INPUT_FLAG))
             	{
             		directoryToTraverse = argumentParser.getValue(INPUT_FLAG);
+            		directory = Paths.get(directoryToTraverse);
             		
-            		// TODO Paths.get(directoryToTraverse);
-            		directory = FileSystems.getDefault().getPath(directoryToTraverse);
             		//if directory isn't a valid directory
             		if(!Files.isDirectory(directory))
             		{
@@ -150,11 +148,9 @@ public class Driver {
             	//if index flag has a value
             	if(argumentParser.getValue(INDEX_FLAG)!=null)
             	{
-            	    // TODO Don't use the File class anymore
-            	    // TODO Path userInputFile = Paths.get(argumentParser.getValue(...));
-            		File userInputFile = new File(argumentParser.getValue(INDEX_FLAG));
+            		Path userInputFile = Paths.get(argumentParser.getValue(INDEX_FLAG));
             		//if index flag value is not valid
-                	if(!userInputFile.isFile())
+                	if(!userInputFile.isAbsolute())
                 	{
                 		System.err.println("Invalid file");
                 	}
@@ -163,21 +159,19 @@ public class Driver {
             	//if index flag has no value
             	else
             	{
-            		outputFile = new File(INDEX_DEFAULT);
+            		outputFile = Paths.get(INDEX_DEFAULT);
             	}
             }
 
-            // TODO DirectorTraverser.traverse(...)
             //Traverses through the directory given by user
-            directoryTraverser.traverse(directory, invertedIndex);
+            DirectoryTraverser.traverse(directory, invertedIndexBuilder, invertedIndex);
             
             //Writes to the appropriate text file, if provided
-            invertedIndex.writeIndex(outputFile.toString());
+            invertedIndex.writeIndexToFile(outputFile.toString());
             
             
         }catch(NullPointerException e){
-            // TODO Better error message
-        	System.err.println("Null pointer exception");
+        	System.err.println("No input found");
         }
         
     }

@@ -7,13 +7,7 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 
 public class JSONWriter {
-	// TODO Remove constructor
-	/**
-	 * Initializes an empty JSON writer. 
-	 * @return 
-	 */
-	public JSONWriter() {
-	}
+
 
 	/**
 	 * Helper method to indent several times by 2 spaces each time. For example,

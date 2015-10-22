@@ -12,14 +12,6 @@ public class DirectoryTraverser {
 	 * of the text files located in the given directory.
 	 */
 
-	// TODO Can remove constructor entirely.
-	/**
-	 * Initializes an empty Directory Traverser. 
-	 * @return 
-	 */
-	public DirectoryTraverser() {
-	}
-
 
 	/**
 	 * Traverses the directory passed in from args to attempt to 
@@ -32,7 +24,7 @@ public class DirectoryTraverser {
 	 * @throws IOException 
 	 * @see #fileParser.invertedIndexBuilder(String file)
 	 */
-	public static void traverse(Path directory, InvertedIndex invertedIndex) throws IOException{
+	public static void traverse(Path directory, InvertedIndexBuilder invertedIndexBuilder, InvertedIndex invertedIndex) throws IOException{
 
 		//Executed if directory is a directory	
 		if(Files.isDirectory(directory))
@@ -41,7 +33,7 @@ public class DirectoryTraverser {
 			{
 				for(Path directoryPaths: directoryStream)
 				{
-					traverse(directoryPaths, invertedIndex);
+					traverse(directoryPaths, invertedIndexBuilder, invertedIndex);
 				}	
 			}
 		}
@@ -54,7 +46,8 @@ public class DirectoryTraverser {
 			if(fileName.endsWith("txt"))
 			{
 				//Reads file and adds words read to inverted index data structure
-				invertedIndex.invertedIndexBuilder(directory.toString());
+				invertedIndexBuilder.parseFile(directory.toString(), invertedIndex);
+				
 			}
 		}
 
