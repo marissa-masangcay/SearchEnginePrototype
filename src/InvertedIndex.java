@@ -94,6 +94,19 @@ public class InvertedIndex {
 				}
 			}
 		}
+		
+		// TODO Alternate logic
+		/*
+		if (!index.containsKey(word)) {
+			index.put(word, new TreeMap<String, TreeSet<Integer>>());
+		}
+		
+		if (!index.get(word).containsKey(text)) {
+			index.get(word).put(text, new TreeSet<Integer>());
+		}
+		
+		index.get(word).get(text).add(position);
+		*/
 	}
 	
 	
@@ -112,6 +125,7 @@ public class InvertedIndex {
 	public void writeIndexToFile(String output) throws UnsupportedEncodingException, FileNotFoundException, IOException{
 		Path inputFile = Paths.get(output);
 
+		// TODO Files.newBufferedWriter(inputFile, Charset.forName("UTF8"))
 		try(
 				BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter
 						(new FileOutputStream(inputFile.toString()), "UTF8"));
@@ -148,10 +162,11 @@ public class InvertedIndex {
 	 */
 	public boolean hasPath(String word, String path)
 	{
+		// TODO Avoid null pointers, check if word exists first.
 		return index.get(word).containsValue(path);
 	}
 
-	
+	// TODO addAll(ArrayList<String> words, Path file, int start)
 	/**
 	 * Adds all words within the given array list to the inverted index 
 	 * 
@@ -172,7 +187,7 @@ public class InvertedIndex {
 	 * 
 	 * @return inverted index converted to string
 	 */
-	public String toString()
+	public String toString() // TODO @Override
 	{
 		return index.toString();
 	}
