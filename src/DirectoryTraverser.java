@@ -3,16 +3,16 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-
+// TODO Move class Javadoc just before the class definition.
+// TODO Consider combining DirectoryTraverse and InvertedIndexBuilder.
+/**
+ * This class provides the method to recursively traverse through the 
+ * directory that was input by the user. It finds and reads all
+ * of the text files located in the given directory.
+ */
 public class DirectoryTraverser {
 
-	/**
-	 * This class provides the method to recursively traverse through the 
-	 * directory that was input by the user. It finds and reads all
-	 * of the text files located in the given directory.
-	 */
-
-
+	// TODO Remove InvertedIndexBuilder from the parameters
 	/**
 	 * Traverses the directory passed in from args to attempt to 
 	 * find and extract text files from.
@@ -37,7 +37,6 @@ public class DirectoryTraverser {
 				}	
 			}
 		}
-
 		//Executed if a file
 		else
 		{
@@ -45,6 +44,7 @@ public class DirectoryTraverser {
 
 			if(fileName.endsWith("txt"))
 			{
+				// TODO Use static access InvertedIndexBuilder.parseFile(...)
 				//Reads file and adds words read to inverted index data structure
 				invertedIndexBuilder.parseFile(directory.toString(), invertedIndex);
 				
