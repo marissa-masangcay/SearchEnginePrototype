@@ -52,21 +52,21 @@ public class ArgumentParser {
 	public void parseArguments(String[] args) {
 		for (int i = 0; i < args.length; i++)
 		{			
-			if(isFlag( args[i] ))
+			if (isFlag( args[i] ))
 			{
-				if(i == (args.length - 1))
+				if (i == (args.length - 1))
 				{
 					argumentMap.put(args[i], null);
 				}
 				else
 				{
-					if(!isFlag(args[i + 1]))
+					if (!isFlag(args[i + 1]))
 					{
 						argumentMap.put(args[i], args[i + 1]); 
 						i++;
 					}
 
-					else if(isFlag(args[i + 1]))
+					else if (isFlag(args[i + 1]))
 					{
 						argumentMap.put(args[i], null);
 					}
@@ -140,7 +140,7 @@ public class ArgumentParser {
 		if (argumentMap.containsKey( flag ))
 		{
 			String flagValue = argumentMap.get( flag );
-			if(flagValue != null)
+			if (flagValue != null)
 			{
 				return true;
 			}
@@ -156,7 +156,7 @@ public class ArgumentParser {
 	 * @return value of flag or null if flag does not exist or has no value
 	 */
 	public String getValue(String flag) {
-		if(argumentMap.containsKey( flag ))
+		if (argumentMap.containsKey( flag ))
 		{
 			return argumentMap.get( flag );
 		}

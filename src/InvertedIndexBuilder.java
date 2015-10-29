@@ -54,7 +54,7 @@ public class InvertedIndexBuilder {
 		return textSplit;
 	}
 
-
+	// TODO Make static, use Files.newBufferedReader()
 	/**
 	 * Reads in a file to parse words and add them at their positions found
 	 * along with text file's name to the inverted index. 

@@ -107,6 +107,8 @@ public class Driver {
         
         ArgumentParser argumentParser = new ArgumentParser(args);
         InvertedIndex invertedIndex = new InvertedIndex();
+        
+        // TODO Remove after making parseFile static.
         InvertedIndexBuilder invertedIndexBuilder = new InvertedIndexBuilder();
                
         String directoryToTraverse = null;
@@ -170,7 +172,7 @@ public class Driver {
             invertedIndex.writeIndexToFile(outputFile.toString());
             
             
-        }catch(NullPointerException e){
+        } catch (NullPointerException e) { // TODO Watch spacing
         	System.err.println("No input found");
         }
         
