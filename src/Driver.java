@@ -107,9 +107,6 @@ public class Driver {
         
         ArgumentParser argumentParser = new ArgumentParser(args);
         InvertedIndex invertedIndex = new InvertedIndex();
-        
-        // TODO Remove after making parseFile static.
-        InvertedIndexBuilder invertedIndexBuilder = new InvertedIndexBuilder();
                
         String directoryToTraverse = null;
         Path directory = null;
@@ -166,7 +163,8 @@ public class Driver {
             }
 
             //Traverses through the directory given by user
-            DirectoryTraverser.traverse(directory, invertedIndexBuilder, invertedIndex);
+//            DirectoryTraverser.traverse(directory, invertedIndex);
+            InvertedIndexBuilder.traverse(directory, invertedIndex);
             
             //Writes to the appropriate text file, if provided
             invertedIndex.writeIndexToFile(outputFile.toString());

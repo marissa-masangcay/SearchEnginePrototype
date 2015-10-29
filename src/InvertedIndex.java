@@ -45,69 +45,19 @@ public class InvertedIndex {
 	 */
 	public void add(String word, String text, int position)
 	{
-		
-		//if index doesn't contain word
-		if(!index.containsKey(word))
-		{
-			index.put(word, new TreeMap<String, TreeSet<Integer>>());
-			//if index doesn't contain text file name
-			if(!index.get(word).containsKey(text))
-			{
-				index.get(word).put(text, new TreeSet<Integer>());
-				//if index doesn't contain position number
-				if(!index.get(word).get(text).contains(position))
-				{
-					index.get(word).get(text).add(position);
-				}
-			}
-			//if index has text file name
-			else if(index.get(word).containsKey(text))
-			{
-				//if index doesn't contain position for that text file name
-				if(!index.get(word).get(text).contains(position))
-				{
-					index.get(word).get(text).add(position);
-				}
-			}
-		}
 
-		//if index contains word
-		else if(index.containsKey(word))
-		{
-			//if index doesn't contain text file name
-			if(!index.get(word).containsKey(text))
-			{
-				index.get(word).put(text, new TreeSet<Integer>());
-				//if index doesn't contain position number within that text file
-				if(!index.get(word).get(text).contains(position))
-				{
-					index.get(word).get(text).add(position);
-				}
-			}
-			//if index contains text file name
-			else if(index.get(word).containsKey(text))
-			{
-				//if index doesn't contain position number within that text file
-				if(!index.get(word).get(text).contains(position))
-				{
-					index.get(word).get(text).add(position);
-				}
-			}
-		}
-		
-		// TODO Alternate logic
-		/*
 		if (!index.containsKey(word)) {
 			index.put(word, new TreeMap<String, TreeSet<Integer>>());
 		}
-		
+
 		if (!index.get(word).containsKey(text)) {
 			index.get(word).put(text, new TreeSet<Integer>());
 		}
-		
+
 		index.get(word).get(text).add(position);
-		*/
+
 	}
+	
 	
 	
 	/**
@@ -162,8 +112,14 @@ public class InvertedIndex {
 	 */
 	public boolean hasPath(String word, String path)
 	{
-		// TODO Avoid null pointers, check if word exists first.
-		return index.get(word).containsValue(path);
+		if (index.get(word).containsValue(path))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	// TODO addAll(ArrayList<String> words, Path file, int start)
@@ -187,7 +143,8 @@ public class InvertedIndex {
 	 * 
 	 * @return inverted index converted to string
 	 */
-	public String toString() // TODO @Override
+	@Override
+	public String toString() 
 	{
 		return index.toString();
 	}

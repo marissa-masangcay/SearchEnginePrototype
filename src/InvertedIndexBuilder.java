@@ -2,6 +2,8 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -54,7 +56,7 @@ public class InvertedIndexBuilder {
 		return textSplit;
 	}
 
-	// TODO Make static, use Files.newBufferedReader()
+	// TODO use Files.newBufferedReader()
 	/**
 	 * Reads in a file to parse words and add them at their positions found
 	 * along with text file's name to the inverted index. 
@@ -63,7 +65,7 @@ public class InvertedIndexBuilder {
 	 *            file to read in
 	 * @return 
 	 */
-	public void parseFile(String path, InvertedIndex invertedIndex) throws IOException
+	public static void parseFile(String path, InvertedIndex invertedIndex) throws IOException
 	{
 		int position = 0;
 
@@ -92,5 +94,42 @@ public class InvertedIndexBuilder {
 			}
 		}
 	} 
+	
+	/**
+	 * Traverses the directory passed in from args to attempt to 
+	 * find and extract text files from.
+	 * Uses {@link #fileParser.invertedIndexBuilder(String file)} to 
+	 * read and add to the map each text file found.
+	 *
+	 * @param directory input directory from command line args
+	 * @return 
+	 * @throws IOException 
+	 * @see #fileParser.invertedIndexBuilder(String file)
+	 */
+	public static void traverse(Path directory, InvertedIndex invertedIndex) throws IOException{
+
+		//Executed if directory is a directory	
+		if(Files.isDirectory(directory))
+		{
+			try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory))
+			{
+				for(Path directoryPaths: directoryStream)
+				{
+					traverse(directoryPaths, invertedIndex);
+				}	
+			}
+		}
+		//Executed if a file
+		else
+		{
+			String fileName = directory.toString().toLowerCase();
+
+			if(fileName.endsWith("txt"))
+			{
+				//Reads file and adds words read to inverted index data structure
+				InvertedIndexBuilder.parseFile(directory.toString(), invertedIndex);
+			}
+		}
+	}
 
 }
