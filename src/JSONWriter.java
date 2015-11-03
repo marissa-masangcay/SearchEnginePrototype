@@ -139,6 +139,44 @@ public class JSONWriter {
 
 		bufferedWriter.write("}");
 	}
+	
+	
+	/**
+	 * Writes the elements as a JSON object with nested array values to the
+	 * specified output path. The output is in a
+	 * "pretty" format with 2 spaces per indent level.
+	 * 
+	 * <pre>
+	 * {
+	 *   "key1: {
+	 *     "value1/key1": [
+	 *       value1,
+	 *       value2
+	 *     ],
+	 *     "value2/key2": [
+	 *       value3
+	 *     ]
+	 *   }
+	 * }
+	 * </pre>
+	 * 
+	 * <p>
+	 * Note that there is not a trailing space after the second value, the key
+	 * should be in quotes, and this method should NOT throw an exception.
+	 * </p>
+	 * 
+	 * @param output
+	 *            file to write to
+	 * @param elements
+	 *            to write as a JSON array
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
+	 * @throws UnsupportedEncodingException 
+	 */
+	public static void resultsToJSON(String output, TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, BufferedWriter bufferedWriter)
+	{
+		
+	}
 
 
 }

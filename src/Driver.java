@@ -2,6 +2,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This software driver class provides a consistent entry point for the search
@@ -107,11 +110,40 @@ public class Driver {
         
         ArgumentParser argumentParser = new ArgumentParser(args);
         InvertedIndex invertedIndex = new InvertedIndex();
+        
+        QueryParser qp = new QueryParser();
                
         String directoryToTraverse = null;
         Path directory = null;
         Path outputFile = null;
+        Path resultsFile = null;
+        
+//        List<SearchResult> actual = new ArrayList<>();
+//        
+//        SearchResult sr1 = new SearchResult("a.txt", 17, 7);
+//        SearchResult sr2 = new SearchResult("b.txt", 7, 7);
+//        SearchResult sr3 = new SearchResult("c.txt", 27, 8);
+//        SearchResult sr4 = new SearchResult("d.txt", 27, 8);
+//        
+//        Collections.addAll(actual, sr1, sr2, sr3, sr4);
+//        
+//        for(int i = 0; i<actual.size(); i++)
+//        {
+//        	System.out.println(actual.get(i));
+//        }
+//        
+//        System.out.println("*******************+\n");
+//        
+//        Collections.sort(actual, SearchResults.ORDER_BY_SEARCH_RESULT);
+        
+//        for(int i = 0; i<actual.size(); i++)
+//        {
+//        	System.out.println(actual.get(i));
+//        }
+//        
+//        System.out.println("*******************+\n");
 
+        
         try{        
             //input = directory to traverse through
         	//if args has an input flag
@@ -161,6 +193,41 @@ public class Driver {
             		outputFile = Paths.get(INDEX_DEFAULT);
             	}
             }
+            
+            //query = file name to obtain queries from
+            //if args has a query flag
+            if (argumentParser.hasFlag(QUERIES_FLAG))
+            {
+            	if (argumentParser.getValue(QUERIES_FLAG) != null)
+            	{
+            		Path queriesFile = Paths.get(argumentParser.getValue(QUERIES_FLAG));
+            		//if queries flag is not valid
+            		if (!queriesFile.isAbsolute())
+            		{
+            			System.err.println("Invalif query file");
+            		}
+            	}
+            }
+            
+            //results = file name to print query results to
+            //if args has a results flag
+            if (argumentParser.hasFlag(RESULTS_FLAG))
+            {
+            	if (argumentParser.getValue(RESULTS_FLAG) != null)
+            	{
+            		resultsFile = Paths.get(argumentParser.getValue(RESULTS_FLAG));
+            		//if results flag is not valid
+            		if (!resultsFile.isAbsolute())
+            		{
+            			System.err.println("Invalid results file");
+            		}
+            	}
+            	//if no results file path provided
+            	else
+            	{
+            		resultsFile = Paths.get(RESULTS_DEFAULT);
+            	}
+            }
 
             //Traverses through the directory given by user
 //            DirectoryTraverser.traverse(directory, invertedIndex);
@@ -168,6 +235,15 @@ public class Driver {
             
             //Writes to the appropriate text file, if provided
             invertedIndex.writeIndexToFile(outputFile.toString());
+            
+            if ((argumentParser.hasFlag(QUERIES_FLAG)) && (argumentParser.getValue(RESULTS_FLAG)!=null))
+            {
+            	//insert query parser method to parse queries
+            }
+            
+            String testPath = "/Users/Marissa/Desktop/CS212/Repositories/cs212-mjmasangcay-project/"
+            		+ "input/query/simple.txt";
+            QueryParser.parseFile(testPath, invertedIndex);
             
             
         } catch (NullPointerException e) { // TODO Watch spacing
