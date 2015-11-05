@@ -111,37 +111,13 @@ public class Driver {
         ArgumentParser argumentParser = new ArgumentParser(args);
         InvertedIndex invertedIndex = new InvertedIndex();
         
-        QueryParser qp = new QueryParser();
+        QueryParser queryParser = new QueryParser();
                
         String directoryToTraverse = null;
         Path directory = null;
         Path outputFile = null;
         Path resultsFile = null;
-        
-//        List<SearchResult> actual = new ArrayList<>();
-//        
-//        SearchResult sr1 = new SearchResult("a.txt", 17, 7);
-//        SearchResult sr2 = new SearchResult("b.txt", 7, 7);
-//        SearchResult sr3 = new SearchResult("c.txt", 27, 8);
-//        SearchResult sr4 = new SearchResult("d.txt", 27, 8);
-//        
-//        Collections.addAll(actual, sr1, sr2, sr3, sr4);
-//        
-//        for(int i = 0; i<actual.size(); i++)
-//        {
-//        	System.out.println(actual.get(i));
-//        }
-//        
-//        System.out.println("*******************+\n");
-//        
-//        Collections.sort(actual, SearchResults.ORDER_BY_SEARCH_RESULT);
-        
-//        for(int i = 0; i<actual.size(); i++)
-//        {
-//        	System.out.println(actual.get(i));
-//        }
-//        
-//        System.out.println("*******************+\n");
+        Path queriesFile = null;
 
         
         try{        
@@ -200,11 +176,11 @@ public class Driver {
             {
             	if (argumentParser.getValue(QUERIES_FLAG) != null)
             	{
-            		Path queriesFile = Paths.get(argumentParser.getValue(QUERIES_FLAG));
+            		queriesFile = Paths.get(argumentParser.getValue(QUERIES_FLAG));
             		//if queries flag is not valid
-            		if (!queriesFile.isAbsolute())
+            		if (!Files.isReadable(queriesFile))
             		{
-            			System.err.println("Invalif query file");
+            			System.err.println("Invalid query file");
             		}
             	}
             }
@@ -229,23 +205,23 @@ public class Driver {
             	}
             }
 
+
             //Traverses through the directory given by user
 //            DirectoryTraverser.traverse(directory, invertedIndex);
             InvertedIndexBuilder.traverse(directory, invertedIndex);
             
-            //Writes to the appropriate text file, if provided
-            invertedIndex.writeIndexToFile(outputFile.toString());
-            
-            if ((argumentParser.hasFlag(QUERIES_FLAG)) && (argumentParser.getValue(RESULTS_FLAG)!=null))
+            if(argumentParser.hasFlag(INDEX_FLAG))
             {
-            	//insert query parser method to parse queries
+            	 //Writes to the appropriate text file, if provided
+                invertedIndex.writeIndexToFile(outputFile.toString());
             }
             
-            String testPath = "/Users/Marissa/Desktop/CS212/Repositories/cs212-mjmasangcay-project/"
-            		+ "input/query/simple.txt";
-            QueryParser.parseFile(testPath, invertedIndex);
+            if (argumentParser.hasFlag(QUERIES_FLAG))
+            {
+            	queryParser.parseFile(queriesFile.toString(), invertedIndex, resultsFile.toString());
+            }
             
-            
+
         } catch (NullPointerException e) { // TODO Watch spacing
         	System.err.println("No input found");
         }

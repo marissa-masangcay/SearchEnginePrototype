@@ -156,64 +156,68 @@ public class InvertedIndex {
 	}
 	
 	
-	public List<SearchResult> partialSearch(String[] queries)
+	public List<SearchResult> partialSearch(String[]queries) throws IOException
 	{
 		List<SearchResult> searchResults = new ArrayList<SearchResult>();
 		String fileName;
 		int frequency;
 		int initialPosition;
 		String firstFileName;
-		
-		for(int i = 0; i<queries.length; i++)
+
+		List<String> wordsThatStartWithQuery = indexWordChecker(queries);
+
+
+		for(int i = 0; i<wordsThatStartWithQuery.size(); i++)
 		{
-			if(index.containsKey(queries[i]))
+			firstFileName = index.get(wordsThatStartWithQuery.get(i)).firstEntry().getKey();
+			for(Entry<String, TreeSet<Integer>> entry: index.get(wordsThatStartWithQuery.get(i)).tailMap(firstFileName, true).entrySet())
 			{
-				firstFileName = index.get(queries[i]).firstEntry().getKey();
-				for(Entry<String, TreeSet<Integer>> entry: index.get(queries[i]).tailMap(firstFileName, true).entrySet())
+				fileName = entry.getKey();
+				frequency = entry.getValue().size();
+				initialPosition = entry.getValue().first();
+				if(queryMap.containsKey(fileName))
+				{		
+					queryMap.get(fileName).setFrequency((queryMap.get(fileName).getFrequency() + frequency));
+					if(queryMap.get(fileName).getInitialPosition()>initialPosition)
+					{
+						queryMap.get(fileName).setInitialPosition(initialPosition);
+					}
+				}
+				else
 				{
-					fileName = entry.getKey();
-					frequency = entry.getValue().size();
-					initialPosition = entry.getValue().first();
-					if ( queryMap.containsKey(fileName) )
-					{
-						queryMap.get(fileName).setFrequency((frequency + queryMap.get(fileName).getFrequency()));
-						if(queryMap.get(fileName).getInitialPosition()>initialPosition)
-						{
-							queryMap.get(fileName).setInitialPosition(initialPosition);
-						}
-					}
-					else
-					{
-						SearchResult sr = new SearchResult(fileName, frequency, initialPosition);
-						searchResults.add(sr);
-						queryMap.put(fileName, sr);
-					}
-				}		
-			}
-			else
-			{
-				System.out.println("Index doesn't have: "+queries[i]);
+					SearchResult sr = new SearchResult(fileName, frequency, initialPosition);
+					searchResults.add(sr);
+					queryMap.put(fileName, sr);
+				}
 			}
 		}
-		
-		System.out.println("");
-		for(int m = 0; m<queries.length; m++)
-		{
-			System.out.print(queries[m]+ " ");
-		}
-		
 		Collections.sort(searchResults, SearchResults.ORDER_BY_SEARCH_RESULT);
-		
-		System.out.println("");
-		for(int n = 0; n<searchResults.size(); n++)
-		{
-			System.out.println(searchResults.get(n));
-		}
-		
+
 		queryMap.clear();
-		
-		
+
 		return searchResults;
 	}
+
+
+	public List<String> indexWordChecker(String [] queries)
+	{
+		Object[] first;
+		List<String> words = new ArrayList<String>();
+
+		first = index.keySet().toArray();
+
+		for(int j = 0; j<queries.length; j++)
+		{
+			for(int i = 0; i<first.length; i++)
+			{
+				if(first[i].toString().startsWith(queries[j]))
+				{
+					words.add(first[i].toString());
+				}
+			}
+		}
+		return words;
+	}
+	
 }
 
