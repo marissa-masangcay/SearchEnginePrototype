@@ -205,7 +205,7 @@ public class Driver {
             //Traverses through the directory given by user
             InvertedIndexBuilder.traverse(directory, invertedIndex);
             
-            if(argumentParser.hasFlag(INDEX_FLAG))
+            if (argumentParser.hasFlag(INDEX_FLAG))
             {
             	 //Writes to the appropriate text file, if provided
                 invertedIndex.writeIndexToFile(outputFile.toString());
@@ -217,7 +217,7 @@ public class Driver {
             }
             
 
-        } catch (NullPointerException e) { // TODO Watch spacing
+        } catch (NullPointerException e) { 
         	System.err.println("No input found");
         }
         

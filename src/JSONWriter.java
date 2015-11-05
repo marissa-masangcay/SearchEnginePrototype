@@ -74,7 +74,7 @@ public class JSONWriter {
 		bufferedWriter.write("{");
 
 		//if elements is not empty
-		if(!elements.isEmpty())
+		if ( !elements.isEmpty() )
 		{
 			//Starts with first element in outer most map (key = word)
 			Entry<String, TreeMap<String, TreeSet<Integer>>> first = elements.firstEntry();
@@ -92,7 +92,7 @@ public class JSONWriter {
 
 				int textCounter = 0;
 				//For loop traverses through and writes text file names stored in inverted index
-				for(Entry<String, TreeSet<Integer>> secondEntry: entry.getValue().entrySet())
+				for (Entry<String, TreeSet<Integer>> secondEntry: entry.getValue().entrySet())
 				{
 					bufferedWriter.write(System.lineSeparator());
 					bufferedWriter.write(indent(2));
@@ -105,7 +105,7 @@ public class JSONWriter {
 					//For loop traverses through and writes positions stored in inverted index
 					for(Integer thirdEntry: secondEntry.getValue().tailSet(secondEntry.getValue().iterator().next(), true))
 					{
-						if(positionCounter!=0 && positionCounter< secondEntry.getValue().size())
+						if (positionCounter!=0 && positionCounter< secondEntry.getValue().size())
 						{
 							bufferedWriter.write(",");
 						}
@@ -118,7 +118,7 @@ public class JSONWriter {
 					bufferedWriter.write(indent(2));
 					bufferedWriter.write("]");
 					textCounter++;
-					if(entry.getValue().size()>1 && textCounter<entry.getValue().size())
+					if (entry.getValue().size()>1 && textCounter<entry.getValue().size())
 					{
 						bufferedWriter.write(",");
 					}
@@ -128,7 +128,7 @@ public class JSONWriter {
 				bufferedWriter.write(indent(1));
 				bufferedWriter.write("}");
 				wordCounter++;
-				if(elements.size()>1 && wordCounter<elements.size())
+				if (elements.size()>1 && wordCounter<elements.size())
 				{
 					bufferedWriter.write(",");
 				}
@@ -143,41 +143,47 @@ public class JSONWriter {
 	
 	
 	/**
-	 * Writes the elements as a JSON object with nested array values to the
+	 * Writes the search result objects as a JSON object with list values to the
 	 * specified output path. The output is in a
 	 * "pretty" format with 2 spaces per indent level.
 	 * 
 	 * <pre>
 	 * {
-	 *   "key1: {
-	 *     "value1/key1": [
-	 *       value1,
-	 *       value2
-	 *     ],
-	 *     "value2/key2": [
-	 *       value3
-	 *     ]
-	 *   }
+	 *   "Line"(Query): [
+	 *     {
+	 *       "where": "file name",
+	 *       "count": frequency,
+	 *       "index": initialPosition
+	 *     },
+	 *     {
+	 *       "where": "file name",
+	 *       "count": frequency,
+	 *       "index": initialPosition
+	 *     }
+	 *   ]
 	 * }
 	 * </pre>
 	 * 
-	 * <p>
-	 * Note that there is not a trailing space after the second value, the key
-	 * should be in quotes, and this method should NOT throw an exception.
-	 * </p>
-	 * 
-	 * @param output
-	 *            file to write to
-	 * @param elements
-	 *            to write as a JSON array
-	 * @throws IOException 
-	 * @throws FileNotFoundException 
-	 * @throws UnsupportedEncodingException 
+	 * @param searchResults
+	 *            List of search results to write to given
+	 *            file outputFile
+	 * @param outputFile
+	 *            file to write to as a JSON object
+	 * @param line
+	 *            query words given for list of search results
+	 * @param bufferedWriter
+	 *            BufferedWriter to write to file given
+	 * @param lastLine
+	 *            line that determines when to exclude ","
+	 * @param firstLine
+	 *            line that determines when to include "{"
+	 * @throws IOException  
 	 */
-	public static void resultsToJSON(List<SearchResult> searchResults, String outputFile, String line, BufferedWriter bufferedWriter, boolean lastLine, boolean firstLine) throws IOException
+	public static void resultsToJSON(List<SearchResult> searchResults, String outputFile, String line, 
+			BufferedWriter bufferedWriter, boolean lastLine, boolean firstLine) throws IOException
 	{
 
-		if(firstLine)
+		if ( firstLine )
 		{
 			bufferedWriter.write("{");
 		}
@@ -190,9 +196,9 @@ public class JSONWriter {
 		bufferedWriter.write(" ");
 		bufferedWriter.write("[");
 
-		if(!searchResults.isEmpty())
+		if ( !searchResults.isEmpty() )
 		{
-			for(int i = 0; i<searchResults.size(); i++)
+			for ( int i = 0; i < searchResults.size(); i++ )
 			{
 				bufferedWriter.write(System.lineSeparator());
 				bufferedWriter.write(indent(2));
@@ -225,34 +231,34 @@ public class JSONWriter {
 				bufferedWriter.write(indent(2));
 				bufferedWriter.write("}");
 
-				if(i != searchResults.size()-1)
+				if (i != searchResults.size()-1 )
 				{
 					bufferedWriter.write(",");
 				}
 
-				if(i == searchResults.size()-1)
+				if ( i == searchResults.size()-1 )
 				{
 					bufferedWriter.write(System.lineSeparator());
 					bufferedWriter.write(indent(1));
 					bufferedWriter.write("]");
-					if(!lastLine)
+					if ( !lastLine )
 					{
 						bufferedWriter.write(",");
 					}
 				}
 			}
 		}
-		if(searchResults.isEmpty())
+		if ( searchResults.isEmpty() )
 		{
 			bufferedWriter.write(System.lineSeparator());
 			bufferedWriter.write(indent(1));
 			bufferedWriter.write("]");
-			if(!lastLine)
+			if ( !lastLine )
 			{
 				bufferedWriter.write(",");
 			}
 		}
-		if(lastLine)
+		if ( lastLine )
 		{
 			bufferedWriter.write(System.lineSeparator());
 			bufferedWriter.write(indent(0));

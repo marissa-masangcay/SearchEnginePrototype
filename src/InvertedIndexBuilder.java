@@ -49,14 +49,14 @@ public class InvertedIndexBuilder {
 	public static String[] split(String text) {
 		String[] textSplit = new String[0];
 		text = clean(text);
-		if(!text.isEmpty())
+		if (!text.isEmpty() )
 		{
 			textSplit = text.split(SPLIT_REGEX);
 		}
 		return textSplit;
 	}
 
-	// TODO use Files.newBufferedReader()
+
 	/**
 	 * Reads in a file to parse words and add them at their positions found
 	 * along with text file's name to the inverted index. 
@@ -77,13 +77,13 @@ public class InvertedIndexBuilder {
 			String line;
 
 			//Reads in each line of file
-			while ((line = bufferedReader.readLine()) != null) 
+			while ( (line = bufferedReader.readLine()) != null ) 
 			{
 				String[] splitLine = split(line);
-				for(int i = 0; i<splitLine.length; i++)
+				for (int i = 0; i < splitLine.length; i++ )
 				{
 					String word = clean(splitLine[i]);
-					if(!word.isEmpty())
+					if ( !word.isEmpty() )
 					{
 						//adds word, text file name, and position 
 						//to the inverted index
@@ -109,11 +109,11 @@ public class InvertedIndexBuilder {
 	public static void traverse(Path directory, InvertedIndex invertedIndex) throws IOException{
 
 		//Executed if directory is a directory	
-		if(Files.isDirectory(directory))
+		if ( Files.isDirectory(directory) )
 		{
 			try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory))
 			{
-				for(Path directoryPaths: directoryStream)
+				for ( Path directoryPaths: directoryStream )
 				{
 					traverse(directoryPaths, invertedIndex);
 				}	
@@ -124,7 +124,7 @@ public class InvertedIndexBuilder {
 		{
 			String fileName = directory.toString().toLowerCase();
 
-			if(fileName.endsWith("txt"))
+			if ( fileName.endsWith("txt") )
 			{
 				//Reads file and adds words read to inverted index data structure
 				InvertedIndexBuilder.parseFile(directory.toString(), invertedIndex);

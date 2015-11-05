@@ -1,5 +1,6 @@
-
-
+/**
+ * This class creates search result objects.
+ */
 public class SearchResult implements Comparable<SearchResult> {
 
 	/* Frequency of the search result */
@@ -12,9 +13,9 @@ public class SearchResult implements Comparable<SearchResult> {
 	private String fileName;
 
 	public SearchResult(String fileName, int frequency, int initialPosition) {
+		this.fileName = fileName;
 		this.frequency = frequency;
 		this.initialPosition = initialPosition;
-		this.fileName = fileName;
 	}
 
 	/**
@@ -33,7 +34,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	 * @return true if the frequency was set
 	 */
 	public boolean setFrequency(int frequency) {
-		if (frequency < 0){
+		if ( frequency < 0 ){
 			return false;
 		}
 		else{
@@ -58,7 +59,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	 * @return true if the initial position was set
 	 */
 	public boolean setInitialPosition(int initialPosition) {
-		if (initialPosition < 0)
+		if ( initialPosition < 0 )
 		{
 			return false;
 		}
@@ -84,14 +85,14 @@ public class SearchResult implements Comparable<SearchResult> {
 	 * @return true if the title was set
 	 */
 	public boolean setFileName(String fileName) {
-		if (fileName == null || fileName.trim().isEmpty()){
+		if ( fileName == null || fileName.trim().isEmpty() )
+		{
 			return false;
 		}
 		else{
 			this.fileName = fileName;
 			return true;
 		}
-
 	}
 
 	@Override
@@ -102,7 +103,6 @@ public class SearchResult implements Comparable<SearchResult> {
 
 	@Override
 	public int compareTo(SearchResult other) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 }

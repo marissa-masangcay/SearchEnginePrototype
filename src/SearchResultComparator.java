@@ -1,10 +1,9 @@
 import java.util.Comparator;
 /**
- * This class consists exclusively of static methods that operate on or return
- * on {@link SearchResult} objects.
+ * This class creates a custom comparator for search result objects.
  */
 
-public class SearchResults {
+public class SearchResultComparator {
 	
 	/**
      * A {@link Comparator} that compares by frequency. If the frequencies
@@ -15,19 +14,18 @@ public class SearchResults {
      * @see String#compareTo(String)
      * @see Integer#compare(int, int)
      */
-    public static final Comparator<SearchResult> ORDER_BY_SEARCH_RESULT = new SearchResults.searchResultComparator(); 
+    public static final Comparator<SearchResult> ORDER_BY_SEARCH_RESULT = new SearchResultComparator.searchResultComparator(); 
     
     public static class searchResultComparator implements Comparator<SearchResult> 
     {
-
 		@Override
 		public int compare(SearchResult result1, SearchResult result2) {
 			int frequency = Integer.compare(result2.getFrequency(), result1.getFrequency());
-    		if (frequency == 0)
+    		if ( frequency == 0 )
     		{
     			//Compare initial position
     			int initialPosition = Integer.compare(result1.getInitialPosition(), result2.getInitialPosition());
-    			if (initialPosition == 0)
+    			if ( initialPosition == 0 )
     			{
     				//Compare ISBN
     				Comparator<String> fileNameComparator = String.CASE_INSENSITIVE_ORDER;
@@ -44,7 +42,6 @@ public class SearchResults {
     			return frequency;
     		}
 		}
-
     }
 
 }

@@ -23,12 +23,14 @@ public class InvertedIndex {
 	  * outermost map and as the key for the second nested map.
 	  * Stores the positions of the word found in that given text file as the
 	  * value for the text file in the second nested map.
+	  * Stores the queries in a map with the queries read in from given file
+	  * as the string key value and the search result generated as the value
 	  */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 	private final HashMap<String, SearchResult> queryMap;
 
 	
-	/** Instantiates the inverted index */
+	/** Instantiates the inverted index and query map */
 	public InvertedIndex()
 	{
 		index = new TreeMap<String, TreeMap<String, TreeSet<Integer>>>();
@@ -81,7 +83,6 @@ public class InvertedIndex {
 	public void writeIndexToFile(String output) throws UnsupportedEncodingException, FileNotFoundException, IOException{
 		Path inputFile = Paths.get(output);
 
-		// TODO Files.newBufferedWriter(inputFile, Charset.forName("UTF8"))
 		try(
 				BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter
 						(new FileOutputStream(inputFile.toString()), "UTF8"));
@@ -128,7 +129,6 @@ public class InvertedIndex {
 		}
 	}
 
-	// TODO addAll(ArrayList<String> words, Path file, int start)
 	/**
 	 * Adds all words within the given array list to the inverted index 
 	 * 
@@ -155,8 +155,17 @@ public class InvertedIndex {
 		return index.toString();
 	}
 	
-	
-	public List<SearchResult> partialSearch(String[]queries) throws IOException
+	/**
+	 * Finds all words in inverted index that start with given query
+	 * words with helper method wordsThatStartWithQuery and creates
+	 * search result objects from those words and stores them all in
+	 * a list to return 
+	 * 
+	 * @param queries
+	 *            word to search for in inverted index
+	 * @return List of search result objects that start with given queries
+	 */
+	public List<SearchResult> partialSearch(String[] queries) throws IOException
 	{
 		List<SearchResult> searchResults = new ArrayList<SearchResult>();
 		String fileName;
@@ -164,21 +173,22 @@ public class InvertedIndex {
 		int initialPosition;
 		String firstFileName;
 
+		//calls helper method to obtain all words that start with given
+		//queries in inverted index
 		List<String> wordsThatStartWithQuery = indexWordChecker(queries);
 
-
-		for(int i = 0; i<wordsThatStartWithQuery.size(); i++)
+		for ( int i = 0; i < wordsThatStartWithQuery.size(); i++ )
 		{
 			firstFileName = index.get(wordsThatStartWithQuery.get(i)).firstEntry().getKey();
-			for(Entry<String, TreeSet<Integer>> entry: index.get(wordsThatStartWithQuery.get(i)).tailMap(firstFileName, true).entrySet())
+			for ( Entry<String, TreeSet<Integer>> entry: index.get(wordsThatStartWithQuery.get(i)).tailMap(firstFileName, true).entrySet() )
 			{
 				fileName = entry.getKey();
 				frequency = entry.getValue().size();
 				initialPosition = entry.getValue().first();
-				if(queryMap.containsKey(fileName))
+				if ( queryMap.containsKey(fileName) )
 				{		
 					queryMap.get(fileName).setFrequency((queryMap.get(fileName).getFrequency() + frequency));
-					if(queryMap.get(fileName).getInitialPosition()>initialPosition)
+					if ( queryMap.get(fileName).getInitialPosition()>initialPosition )
 					{
 						queryMap.get(fileName).setInitialPosition(initialPosition);
 					}
@@ -191,7 +201,8 @@ public class InvertedIndex {
 				}
 			}
 		}
-		Collections.sort(searchResults, SearchResults.ORDER_BY_SEARCH_RESULT);
+		//sorts all serch result objects created using custom comparator
+		Collections.sort(searchResults, SearchResultComparator.ORDER_BY_SEARCH_RESULT);
 
 		queryMap.clear();
 
@@ -199,18 +210,26 @@ public class InvertedIndex {
 	}
 
 
-	public List<String> indexWordChecker(String [] queries)
+	/**
+	 * Helper method to obtain all words in inverted index that start
+	 * with given query words 
+	 * 
+	 * @param queries
+	 *            queries to check for in inverted index
+	 * @return List of strings of words that begin with given queries
+	 */
+	public List<String> indexWordChecker(String[] queries)
 	{
 		Object[] first;
 		List<String> words = new ArrayList<String>();
 
 		first = index.keySet().toArray();
 
-		for(int j = 0; j<queries.length; j++)
+		for ( int j = 0; j < queries.length; j++ )
 		{
-			for(int i = 0; i<first.length; i++)
+			for ( int i = 0; i < first.length; i++ )
 			{
-				if(first[i].toString().startsWith(queries[j]))
+				if ( first[i].toString().startsWith(queries[j]) )
 				{
 					words.add(first[i].toString());
 				}
