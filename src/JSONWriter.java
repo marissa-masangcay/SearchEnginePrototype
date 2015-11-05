@@ -183,8 +183,8 @@ public class JSONWriter {
 		}
 
 		//if elements is not empty
-		if(!searchResults.isEmpty())
-		{
+//		if(!searchResults.isEmpty())
+//		{
 			bufferedWriter.write(System.lineSeparator());
 			bufferedWriter.write(indent(1));
 			bufferedWriter.write(quote(line));
@@ -233,10 +233,9 @@ public class JSONWriter {
 					{
 						bufferedWriter.write(",");
 					}
+					
 				}
-
-
-				if(i == searchResults.size()-1)
+				if(i == searchResults.size()-1 || searchResults.size()==0)
 				{
 					bufferedWriter.write(System.lineSeparator());
 					bufferedWriter.write(indent(1));
@@ -246,9 +245,17 @@ public class JSONWriter {
 						bufferedWriter.write(",");
 					}
 				}
-
-			}
 		}
+			if(searchResults.isEmpty())
+			{
+				bufferedWriter.write(System.lineSeparator());
+				bufferedWriter.write(indent(1));
+				bufferedWriter.write("]");
+				if(!lastLine)
+				{
+					bufferedWriter.write(",");
+				}
+			}
 		if(lastLine)
 		{
 			bufferedWriter.write(System.lineSeparator());
