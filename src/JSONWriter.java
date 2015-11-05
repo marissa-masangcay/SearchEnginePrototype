@@ -182,60 +182,55 @@ public class JSONWriter {
 			bufferedWriter.write("{");
 		}
 
-		//if elements is not empty
-//		if(!searchResults.isEmpty())
-//		{
-			bufferedWriter.write(System.lineSeparator());
-			bufferedWriter.write(indent(1));
-			bufferedWriter.write(quote(line));
+		bufferedWriter.write(System.lineSeparator());
+		bufferedWriter.write(indent(1));
+		bufferedWriter.write(quote(line));
 
-			bufferedWriter.write(":");
-			bufferedWriter.write(" ");
-			bufferedWriter.write("[");
+		bufferedWriter.write(":");
+		bufferedWriter.write(" ");
+		bufferedWriter.write("[");
 
+		if(!searchResults.isEmpty())
+		{
 			for(int i = 0; i<searchResults.size(); i++)
 			{
-				if(!searchResults.isEmpty())
-				{
-					
-					bufferedWriter.write(System.lineSeparator());
-					bufferedWriter.write(indent(2));
-					bufferedWriter.write("{");
-					
-					//writes file name
-					bufferedWriter.write(System.lineSeparator());
-					bufferedWriter.write(indent(3));
-					bufferedWriter.write(quote("where"));
-					bufferedWriter.write(": ");
-					bufferedWriter.write(quote(searchResults.get(i).getFileName()));
-					bufferedWriter.write(",");
-					
-					//writes count/frequency
-					bufferedWriter.write(System.lineSeparator());
-					bufferedWriter.write(indent(3));
-					bufferedWriter.write(quote("count"));
-					bufferedWriter.write(": ");
-					bufferedWriter.write(String.valueOf(searchResults.get(i).getFrequency()));
-					bufferedWriter.write(",");
-					
-					//writes index/initial position
-					bufferedWriter.write(System.lineSeparator());
-					bufferedWriter.write(indent(3));
-					bufferedWriter.write(quote("index"));
-					bufferedWriter.write(": ");
-					bufferedWriter.write(String.valueOf(searchResults.get(i).getInitialPosition()));
+				bufferedWriter.write(System.lineSeparator());
+				bufferedWriter.write(indent(2));
+				bufferedWriter.write("{");
 
-					bufferedWriter.write(System.lineSeparator());
-					bufferedWriter.write(indent(2));
-					bufferedWriter.write("}");
-					
-					if(i != searchResults.size()-1)
-					{
-						bufferedWriter.write(",");
-					}
-					
+				//writes file name
+				bufferedWriter.write(System.lineSeparator());
+				bufferedWriter.write(indent(3));
+				bufferedWriter.write(quote("where"));
+				bufferedWriter.write(": ");
+				bufferedWriter.write(quote(searchResults.get(i).getFileName()));
+				bufferedWriter.write(",");
+
+				//writes count/frequency
+				bufferedWriter.write(System.lineSeparator());
+				bufferedWriter.write(indent(3));
+				bufferedWriter.write(quote("count"));
+				bufferedWriter.write(": ");
+				bufferedWriter.write(String.valueOf(searchResults.get(i).getFrequency()));
+				bufferedWriter.write(",");
+
+				//writes index/initial position
+				bufferedWriter.write(System.lineSeparator());
+				bufferedWriter.write(indent(3));
+				bufferedWriter.write(quote("index"));
+				bufferedWriter.write(": ");
+				bufferedWriter.write(String.valueOf(searchResults.get(i).getInitialPosition()));
+
+				bufferedWriter.write(System.lineSeparator());
+				bufferedWriter.write(indent(2));
+				bufferedWriter.write("}");
+
+				if(i != searchResults.size()-1)
+				{
+					bufferedWriter.write(",");
 				}
-				if(i == searchResults.size()-1 || searchResults.size()==0)
+
+				if(i == searchResults.size()-1)
 				{
 					bufferedWriter.write(System.lineSeparator());
 					bufferedWriter.write(indent(1));
@@ -245,26 +240,23 @@ public class JSONWriter {
 						bufferedWriter.write(",");
 					}
 				}
-		}
-			if(searchResults.isEmpty())
-			{
-				bufferedWriter.write(System.lineSeparator());
-				bufferedWriter.write(indent(1));
-				bufferedWriter.write("]");
-				if(!lastLine)
-				{
-					bufferedWriter.write(",");
-				}
 			}
+		}
+		if(searchResults.isEmpty())
+		{
+			bufferedWriter.write(System.lineSeparator());
+			bufferedWriter.write(indent(1));
+			bufferedWriter.write("]");
+			if(!lastLine)
+			{
+				bufferedWriter.write(",");
+			}
+		}
 		if(lastLine)
 		{
 			bufferedWriter.write(System.lineSeparator());
 			bufferedWriter.write(indent(0));
 			bufferedWriter.write("}");
 		}
-
 	}
-
-
-
 }

@@ -2,9 +2,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
 
 /**
  * This software driver class provides a consistent entry point for the search
@@ -110,7 +108,6 @@ public class Driver {
         
         ArgumentParser argumentParser = new ArgumentParser(args);
         InvertedIndex invertedIndex = new InvertedIndex();
-        
         QueryParser queryParser = new QueryParser();
                
         String directoryToTraverse = null;
@@ -118,7 +115,6 @@ public class Driver {
         Path outputFile = null;
         Path resultsFile = null;
         Path queriesFile = null;
-
         
         try{        
             //input = directory to traverse through
@@ -207,7 +203,6 @@ public class Driver {
 
 
             //Traverses through the directory given by user
-//            DirectoryTraverser.traverse(directory, invertedIndex);
             InvertedIndexBuilder.traverse(directory, invertedIndex);
             
             if(argumentParser.hasFlag(INDEX_FLAG))

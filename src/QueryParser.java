@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 
-
 /**
  * This class instantiates a private map that will store the user input
  * given through the command line arguments, assuming that the input is valid.
@@ -31,8 +30,8 @@ public class QueryParser {
 	 */
 	public void parseFile(String path, InvertedIndex invertedIndex, String outputPath) throws IOException
 	{
-
 		List<SearchResult> partialSearch = new ArrayList<SearchResult>();
+		
 		try(BufferedReader bufferedReader = new BufferedReader(
 				new InputStreamReader(
 						new FileInputStream(path), "UTF8")))
@@ -45,7 +44,7 @@ public class QueryParser {
 			{
 				String line;
 				//Reads in each line of file
-				while ((line = bufferedReader.readLine()) != null) 
+				while ( (line = bufferedReader.readLine()) != null) 
 				{
 					//iterates through lines of queries from files
 					String[] cleanedSplitLine = InvertedIndexBuilder.split(line);
@@ -53,16 +52,19 @@ public class QueryParser {
 					partialSearch =invertedIndex.partialSearch(cleanedSplitLine);
 					results.put(line, partialSearch);
 				}
+				
 				writeToFile(outputPath, bufferedWriter);
 			}
 		}
 	} 
+	
 	
 	public void writeToFile(String outputPath, BufferedWriter bufferedWriter) throws IOException 
 	{
 		int i = 0;
 		boolean lastLine = false;
 		boolean firstLine = true;
+		
 		for(String line: lines)
 		{
 			List<SearchResult> result = results.get(line);
