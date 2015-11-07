@@ -9,14 +9,11 @@ import java.nio.file.Paths;
 
 public class InvertedIndexBuilder {
 
-
 	/** Regular expression for removing special characters. */
 	public static final String CLEAN_REGEX = "(?U)[^\\p{Alnum}\\p{Space}]+";
 
-
 	/** Regular expression for splitting text into words by whitespace. */
 	public static final String SPLIT_REGEX = "(?U)\\p{Space}+";
-
 
 	/**
 	 * Cleans a word by converting it to lower case and removing any whitespace
@@ -69,6 +66,7 @@ public class InvertedIndexBuilder {
 	{
 		int position = 0;
 
+		// TODO Files.newBufferedReader(Paths.get(path), StardardCharsets.UTF_8);
 		try(BufferedReader bufferedReader = new BufferedReader(
 				new InputStreamReader(
 						new FileInputStream(path), "UTF8")))
@@ -80,7 +78,7 @@ public class InvertedIndexBuilder {
 			while ( (line = bufferedReader.readLine()) != null ) 
 			{
 				String[] splitLine = split(line);
-				for (int i = 0; i < splitLine.length; i++ )
+				for ( int i = 0; i < splitLine.length; i++ )
 				{
 					String word = clean(splitLine[i]);
 					if ( !word.isEmpty() )
@@ -111,7 +109,7 @@ public class InvertedIndexBuilder {
 		//Executed if directory is a directory	
 		if ( Files.isDirectory(directory) )
 		{
-			try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory))
+			try ( DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directory) )
 			{
 				for ( Path directoryPaths: directoryStream )
 				{
