@@ -10,7 +10,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	private int initialPosition;
 
 	/* Name of the file where the word is found */
-	private String fileName;
+	private String fileName; // TODO final 
 
 	public SearchResult(String fileName, int frequency, int initialPosition) {
 		this.fileName = fileName;
@@ -34,7 +34,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	 * @return true if the frequency was set
 	 */
 	public boolean setFrequency(int frequency) {
-		if ( frequency < 0 ){
+		if ( frequency < 0 ) {
 			return false;
 		}
 		else{
@@ -63,11 +63,16 @@ public class SearchResult implements Comparable<SearchResult> {
 		{
 			return false;
 		}
-		else{
+		else {
 			this.initialPosition = initialPosition;
 			return true;
 		}
 	}
+
+	// TODO Add these:
+	// public boolean addFrequency(int frequency) adds this.frequency to frequency
+	// public boolean updatePosition(int position) only updates if less than what you already have
+	// public boolean update(int frequency, int position)
 
 	/**
 	 * Returns the file name
@@ -78,6 +83,7 @@ public class SearchResult implements Comparable<SearchResult> {
 		return fileName;
 	}
 
+	// TODO Remove
 	/**
 	 * Sets the file name if it is non-null and non-empty.
 	 *
@@ -103,6 +109,8 @@ public class SearchResult implements Comparable<SearchResult> {
 
 	@Override
 	public int compareTo(SearchResult other) {
+		// TODO Move logic from searchResultComparator
+		// TODO https://github.com/cs212/homework/blob/fall2015/BookSorter/src/Book.java#L259
 		return 0;
 	}
 }
