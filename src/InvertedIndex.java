@@ -27,6 +27,8 @@ public class InvertedIndex {
 	  * as the string key value and the search result generated as the value
 	  */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
+	
+	// TODO Make this local inside of your method
 	private final HashMap<String, SearchResult> queryMap;
 
 	
@@ -173,18 +175,25 @@ public class InvertedIndex {
 		int initialPosition;
 		String firstFileName;
 
+
+		// TODO Instead of your helper method here, use tailMap() and break
+		// TODO https://github.com/cs212/lectures/blob/fall2015/Data%20Structures/src/FindDemo.java#L134
+		
 		//calls helper method to obtain all words that start with given
 		//queries in inverted index
 		List<String> wordsThatStartWithQuery = indexWordChecker(queries);
 
 		for ( int i = 0; i < wordsThatStartWithQuery.size(); i++ )
 		{
+			// TODO Just loop through all the paths
+			// TODO See: https://github.com/cs212/lectures/blob/fall2015/Data%20Structures/src/IterationDemo.java#L169
 			firstFileName = index.get(wordsThatStartWithQuery.get(i)).firstEntry().getKey();
 			for ( Entry<String, TreeSet<Integer>> entry: index.get(wordsThatStartWithQuery.get(i)).tailMap(firstFileName, true).entrySet() )
 			{
 				fileName = entry.getKey();
 				frequency = entry.getValue().size();
 				initialPosition = entry.getValue().first();
+				
 				if ( queryMap.containsKey(fileName) )
 				{		
 					queryMap.get(fileName).setFrequency((queryMap.get(fileName).getFrequency() + frequency));
@@ -201,6 +210,7 @@ public class InvertedIndex {
 				}
 			}
 		}
+		
 		//sorts all serch result objects created using custom comparator
 		Collections.sort(searchResults, SearchResultComparator.ORDER_BY_SEARCH_RESULT);
 
