@@ -1,3 +1,5 @@
+import java.util.Comparator;
+
 /**
  * This class creates search result objects.
  */
@@ -69,11 +71,57 @@ public class SearchResult implements Comparable<SearchResult> {
 		}
 	}
 
-	// TODO Add these:
-	// public boolean addFrequency(int frequency) adds this.frequency to frequency
-	// public boolean updatePosition(int position) only updates if less than what you already have
-	// public boolean update(int frequency, int position)
-
+	/**
+	 * Adds (and updates) input frequency value to current frequency 
+	 *
+	 * @param frequency
+	 * @return true if frequency is greater than or equal to zero
+	 */
+	public boolean addFrequency(int frequency)
+	{
+		if ( frequency>=0)
+		{
+			this.frequency = this.frequency + frequency;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * Updates current initial position if input position is less than
+	 * current initial position
+	 *
+	 * @param initialPosition
+	 * @return true if the initial position was updated
+	 */
+	public boolean updatePosition(int position)
+	{
+		if ( position< this.initialPosition && position>0)
+		{
+			this.initialPosition = position;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	/**
+	 * Updates the search result's frequency and initial position if needed
+	 *
+	 * @param frequency
+	 * @param initialPosition
+	 * @return true if the frequency and initial position were updated
+	 */
+	public boolean update(int frequency, int position)
+	{
+		return (addFrequency(frequency) && updatePosition(position));
+	}
+	
 	/**
 	 * Returns the file name
 	 *
@@ -83,23 +131,6 @@ public class SearchResult implements Comparable<SearchResult> {
 		return fileName;
 	}
 
-	// TODO Remove
-	/**
-	 * Sets the file name if it is non-null and non-empty.
-	 *
-	 * @param fileName
-	 * @return true if the title was set
-	 */
-	public boolean setFileName(String fileName) {
-		if ( fileName == null || fileName.trim().isEmpty() )
-		{
-			return false;
-		}
-		else{
-			this.fileName = fileName;
-			return true;
-		}
-	}
 
 	@Override
 	public String toString() {
@@ -107,11 +138,38 @@ public class SearchResult implements Comparable<SearchResult> {
 				initialPosition +"]";
 	}
 
+	/**
+	 * Compares search results and sorts them by frequency, initialPosition, 
+	 * and text file name
+	 *
+	 * @param other
+	 *    Search result to be compared with
+	 * @return the value of the two search results after being compared
+	 */
 	@Override
 	public int compareTo(SearchResult other) {
-		// TODO Move logic from searchResultComparator
-		// TODO https://github.com/cs212/homework/blob/fall2015/BookSorter/src/Book.java#L259
-		return 0;
+		
+		int frequency = Integer.compare(other.getFrequency(), this.getFrequency());
+		if ( frequency == 0 )
+		{
+			//Compare initial position
+			int initialPosition = Integer.compare(this.getInitialPosition(), other.getInitialPosition());
+			if ( initialPosition == 0 )
+			{
+				//Compare fileName
+				Comparator<String> fileNameComparator = String.CASE_INSENSITIVE_ORDER;
+				int fileName = fileNameComparator.compare(this.getFileName(), other.getFileName());
+				return fileName;
+			}
+			else
+			{
+				return initialPosition;
+			}
+		}
+		else
+		{
+			return frequency;
+		}
 	}
 }
 

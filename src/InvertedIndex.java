@@ -27,16 +27,12 @@ public class InvertedIndex {
 	  * as the string key value and the search result generated as the value
 	  */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
-	
-	// TODO Make this local inside of your method
-	private final HashMap<String, SearchResult> queryMap;
 
 	
 	/** Instantiates the inverted index and query map */
 	public InvertedIndex()
 	{
 		index = new TreeMap<String, TreeMap<String, TreeSet<Integer>>>();
-		queryMap = new HashMap<String, SearchResult>();
 	}
 
 
@@ -170,54 +166,44 @@ public class InvertedIndex {
 	public List<SearchResult> partialSearch(String[] queries) throws IOException
 	{
 		List<SearchResult> searchResults = new ArrayList<SearchResult>();
-		String fileName;
-		int frequency;
-		int initialPosition;
-		String firstFileName;
+		HashMap<String, SearchResult> queryMap = new HashMap<String, SearchResult>();
+		String fileName = null;
+		int frequency = 0;
+		int initialPosition = 0;	
 
-
-		// TODO Instead of your helper method here, use tailMap() and break
-		// TODO https://github.com/cs212/lectures/blob/fall2015/Data%20Structures/src/FindDemo.java#L134
-		
-		//calls helper method to obtain all words that start with given
-		//queries in inverted index
-		List<String> wordsThatStartWithQuery = indexWordChecker(queries);
-
-		for ( int i = 0; i < wordsThatStartWithQuery.size(); i++ )
+		for (String query: queries)
 		{
-			// TODO Just loop through all the paths
-			// TODO See: https://github.com/cs212/lectures/blob/fall2015/Data%20Structures/src/IterationDemo.java#L169
-			firstFileName = index.get(wordsThatStartWithQuery.get(i)).firstEntry().getKey();
-			for ( Entry<String, TreeSet<Integer>> entry: index.get(wordsThatStartWithQuery.get(i)).tailMap(firstFileName, true).entrySet() )
+			for ( String word: index.tailMap(query).keySet() )
 			{
-				fileName = entry.getKey();
-				frequency = entry.getValue().size();
-				initialPosition = entry.getValue().first();
-				
-				if ( queryMap.containsKey(fileName) )
-				{		
-					queryMap.get(fileName).setFrequency((queryMap.get(fileName).getFrequency() + frequency));
-					if ( queryMap.get(fileName).getInitialPosition()>initialPosition )
-					{
-						queryMap.get(fileName).setInitialPosition(initialPosition);
-					}
-				}
-				else
+				for(String path: index.tailMap(query).get(word).keySet())
 				{
-					SearchResult sr = new SearchResult(fileName, frequency, initialPosition);
-					searchResults.add(sr);
-					queryMap.put(fileName, sr);
+					if(word.startsWith(query))
+					{
+						fileName = path;
+						frequency = index.get(word).get(path).size();
+						initialPosition = index.get(word).get(path).first();
+
+						if ( queryMap.containsKey(fileName) )
+						{	
+							//updates search result's frequency and initial position as needed
+							queryMap.get(fileName).update(frequency, initialPosition);
+						}
+						else
+						{
+							SearchResult sr = new SearchResult(fileName, frequency, initialPosition);
+							searchResults.add(sr);
+							queryMap.put(fileName, sr);
+						}
+					}
 				}
 			}
 		}
 		
 		//sorts all serch result objects created using custom comparator
-		Collections.sort(searchResults, SearchResultComparator.ORDER_BY_SEARCH_RESULT);
-
-		queryMap.clear();
-
+		Collections.sort(searchResults);
 		return searchResults;
 	}
+
 
 
 	/**

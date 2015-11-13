@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,16 +63,14 @@ public class InvertedIndexBuilder {
 	 *            file to read in
 	 * @return 
 	 */
-	public static void parseFile(String path, InvertedIndex invertedIndex) throws IOException
+	public static void parseFile(String inputPath, InvertedIndex invertedIndex) throws IOException
 	{
 		int position = 0;
+		Path path = Paths.get(inputPath);
 
-		// TODO Files.newBufferedReader(Paths.get(path), StardardCharsets.UTF_8);
-		try(BufferedReader bufferedReader = new BufferedReader(
-				new InputStreamReader(
-						new FileInputStream(path), "UTF8")))
+		try( BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8))
 		{
-			Path inputFile = Paths.get(path);
+			Path inputFile = Paths.get(inputPath);
 			String line;
 
 			//Reads in each line of file

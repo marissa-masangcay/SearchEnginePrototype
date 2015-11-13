@@ -108,7 +108,7 @@ public class Driver {
         
         ArgumentParser argumentParser = new ArgumentParser(args);
         InvertedIndex invertedIndex = new InvertedIndex();
-        QueryParser queryParser = new QueryParser();
+        QueryParser queryParser = new QueryParser(invertedIndex);
                
         String directoryToTraverse = null;
         Path directory = null;
@@ -213,7 +213,12 @@ public class Driver {
             
             if (argumentParser.hasFlag(QUERIES_FLAG))
             {
-            	queryParser.parseFile(queriesFile.toString(), invertedIndex, resultsFile.toString());
+            	queryParser.parseFile(queriesFile.toString(), resultsFile.toString());
+            }
+            
+            if(argumentParser.hasFlag(RESULTS_FLAG))
+            {
+            	queryParser.writeToFile(resultsFile.toString());
             }
             
 
