@@ -172,6 +172,8 @@ public class ArgumentParser {
 	}
 	*/
 	
+	// TODO Can add other stuff like... public boolean isDirectory(String flag), isValidPath(String flag)
+	
 	@Override
 	public String toString() {
 		return argumentMap.toString();
