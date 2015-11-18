@@ -166,6 +166,11 @@ public class ArgumentParser {
 		}
 	}
 
+	/* TODO
+	public String getOrDefault(String flag, String defaultValue) {
+		// try to use argumentMap.getOrDefault(flag, defaultValue)
+	}
+	*/
 	
 	@Override
 	public String toString() {
