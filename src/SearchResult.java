@@ -12,8 +12,9 @@ public class SearchResult implements Comparable<SearchResult> {
 	private int initialPosition;
 
 	/* Name of the file where the word is found */
-	private String fileName; // TODO final 
+	private final String fileName;
 
+	/** TODO */
 	public SearchResult(String fileName, int frequency, int initialPosition) {
 		this.fileName = fileName;
 		this.frequency = frequency;
@@ -39,7 +40,7 @@ public class SearchResult implements Comparable<SearchResult> {
 		if ( frequency < 0 ) {
 			return false;
 		}
-		else{
+		else {
 			this.frequency = frequency;
 			return true;
 		}
@@ -79,6 +80,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	 */
 	public boolean addFrequency(int frequency)
 	{
+		// TODO Fix formatting
 		if ( frequency>=0)
 		{
 			this.frequency = this.frequency + frequency;
@@ -99,6 +101,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	 */
 	public boolean updatePosition(int position)
 	{
+		// TODO Formatting
 		if ( position< this.initialPosition && position>0)
 		{
 			this.initialPosition = position;
@@ -170,6 +173,19 @@ public class SearchResult implements Comparable<SearchResult> {
 		{
 			return frequency;
 		}
+		
+		// TODO Simplify
+		/*
+		if (this.frequency != other.frequency) {
+			return Integer.compare(other.frequency, this.frequency);
+		}
+		
+		if (this.initialPosition != other.initialPosition) {
+			return Integer.compare(this.initialPosition, other.initialPosition);
+		}
+		
+		return String.CASE_INSENSITIVE_ORDER.compare(this.getFileName(), other.getFileName());
+		*/
 	}
 }
 

@@ -267,4 +267,22 @@ public class JSONWriter {
 			bufferedWriter.write("}");
 		}
 	}
+	
+	/*
+	public void toJSON(BufferedWriter writer, LinkedHashMap<String, List<SearchResult>> map) throws IOException {
+		Iterator<String> i = map.keySet().iterator();
+		
+		while (i.hasNext()) {
+			
+			String key = i.next();
+			
+			if (i.hasNext()) {
+				this is not the last line
+			}
+			else {
+				this is the last line
+			}
+		}
+	}
+	*/
 }

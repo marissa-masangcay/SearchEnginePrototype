@@ -166,6 +166,13 @@ public class ArgumentParser {
 		}
 	}
 
+	/* TODO
+	public String getOrDefault(String flag, String defaultValue) {
+		// try to use argumentMap.getOrDefault(flag, defaultValue)
+	}
+	*/
+	
+	// TODO Can add other stuff like... public boolean isDirectory(String flag), isValidPath(String flag)
 	
 	@Override
 	public String toString() {

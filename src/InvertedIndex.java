@@ -167,16 +167,22 @@ public class InvertedIndex {
 	{
 		List<SearchResult> searchResults = new ArrayList<SearchResult>();
 		HashMap<String, SearchResult> queryMap = new HashMap<String, SearchResult>();
+		
 		String fileName = null;
 		int frequency = 0;
 		int initialPosition = 0;	
 
+		// TODO Formatting
 		for (String query: queries)
 		{
 			for ( String word: index.tailMap(query).keySet() )
 			{
+				// TODO for (String path : index.get(word).keySet())
 				for(String path: index.tailMap(query).get(word).keySet())
 				{
+					// TODO You check this for every path associated with this word. Just need to check once for the word.
+					// TODO Move this if outside the for(path)
+					// TODO Then break if it no longer starts with the query.
 					if(word.startsWith(query))
 					{
 						fileName = path;
@@ -205,7 +211,7 @@ public class InvertedIndex {
 	}
 
 
-
+	// TODO Go ahead and remove
 	/**
 	 * Helper method to obtain all words in inverted index that start
 	 * with given query words 
