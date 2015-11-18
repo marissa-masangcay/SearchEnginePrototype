@@ -23,8 +23,12 @@ import java.util.Map;
  */
 public class QueryParser {
 	
+	// TODO Javadoc members and constructor
+	
+	// TODO Use a LinkedHashMap instead of separate List and Map objects
 	private final Map<String, List<SearchResult>> results;
 	private final List<String> lines;
+	
 	private final InvertedIndex invertedIndex;
 	
 	
@@ -101,13 +105,14 @@ public class QueryParser {
 		boolean lastLine = false;
 		boolean firstLine = true;
 		
-		try(
+		try (
+			// BufferedWriter bufferedWriter = Files.newBufferedWriter(...);
 				
 				BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter
 						(new FileOutputStream(outputPath.toString()), "UTF8"));
 				)
 		{
-			for( String line: lines )
+			for ( String line: lines )
 			{
 				List<SearchResult> result = results.get(line);
 				JSONWriter.resultsToJSON(result, outputPath, line, bufferedWriter, lastLine, firstLine);
