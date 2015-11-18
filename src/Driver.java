@@ -106,6 +106,16 @@ public class Driver {
      */
     public static void main(String[] args) throws IOException {
         
+        // TODO Try to simplify Driver
+        /*
+        if (input flag) do stuff
+        if (search flag) do stuff
+        
+        then handle output
+        if (index flag) do stuff
+        if (result flag) do stuff
+        */
+        
         ArgumentParser argumentParser = new ArgumentParser(args);
         InvertedIndex invertedIndex = new InvertedIndex();
         QueryParser queryParser = new QueryParser(invertedIndex);
