@@ -1,20 +1,19 @@
-import java.util.Comparator;
 
 /**
  * This class creates search result objects.
  */
 public class SearchResult implements Comparable<SearchResult> {
 
-	/* Frequency of the search result */
+	/** Frequency of the search result */
 	private int frequency;
 
-	/* Position first found within the file */
+	/** Position first found within the file */
 	private int initialPosition;
 
-	/* Name of the file where the word is found */
+	/** Name of the file where the word is found */
 	private final String fileName;
 
-	/** TODO */
+	/** Initializes a search result object*/
 	public SearchResult(String fileName, int frequency, int initialPosition) {
 		this.fileName = fileName;
 		this.frequency = frequency;
@@ -80,8 +79,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	 */
 	public boolean addFrequency(int frequency)
 	{
-		// TODO Fix formatting
-		if ( frequency>=0)
+		if ( frequency>=0 )
 		{
 			this.frequency = this.frequency + frequency;
 			return true;
@@ -101,8 +99,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	 */
 	public boolean updatePosition(int position)
 	{
-		// TODO Formatting
-		if ( position< this.initialPosition && position>0)
+		if ( position< this.initialPosition && position>0 )
 		{
 			this.initialPosition = position;
 			return true;
@@ -152,40 +149,15 @@ public class SearchResult implements Comparable<SearchResult> {
 	@Override
 	public int compareTo(SearchResult other) {
 		
-		int frequency = Integer.compare(other.getFrequency(), this.getFrequency());
-		if ( frequency == 0 )
-		{
-			//Compare initial position
-			int initialPosition = Integer.compare(this.getInitialPosition(), other.getInitialPosition());
-			if ( initialPosition == 0 )
-			{
-				//Compare fileName
-				Comparator<String> fileNameComparator = String.CASE_INSENSITIVE_ORDER;
-				int fileName = fileNameComparator.compare(this.getFileName(), other.getFileName());
-				return fileName;
-			}
-			else
-			{
-				return initialPosition;
-			}
-		}
-		else
-		{
-			return frequency;
-		}
-		
-		// TODO Simplify
-		/*
-		if (this.frequency != other.frequency) {
+		if ( this.frequency != other.frequency ) {
 			return Integer.compare(other.frequency, this.frequency);
 		}
 		
-		if (this.initialPosition != other.initialPosition) {
+		if ( this.initialPosition != other.initialPosition ) {
 			return Integer.compare(this.initialPosition, other.initialPosition);
 		}
 		
-		return String.CASE_INSENSITIVE_ORDER.compare(this.getFileName(), other.getFileName());
-		*/
+		return String.CASE_INSENSITIVE_ORDER.compare(this.getFileName(), other.getFileName());	
 	}
 }
 

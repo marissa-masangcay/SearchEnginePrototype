@@ -1,16 +1,15 @@
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -29,7 +28,7 @@ public class InvertedIndex {
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> index;
 
 	
-	/** Instantiates the inverted index and query map */
+	/** Instantiates the inverted index*/
 	public InvertedIndex()
 	{
 		index = new TreeMap<String, TreeMap<String, TreeSet<Integer>>>();
@@ -52,11 +51,11 @@ public class InvertedIndex {
 	public void add(String word, String text, int position)
 	{
 
-		if (!index.containsKey(word)) {
+		if ( !index.containsKey(word) ) {
 			index.put(word, new TreeMap<String, TreeSet<Integer>>());
 		}
 
-		if (!index.get(word).containsKey(text)) {
+		if ( !index.get(word).containsKey(text) ) {
 			index.get(word).put(text, new TreeSet<Integer>());
 		}
 
@@ -82,14 +81,11 @@ public class InvertedIndex {
 		Path inputFile = Paths.get(output);
 
 		try(
-				BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter
-						(new FileOutputStream(inputFile.toString()), "UTF8"));
+				BufferedWriter bufferedWriter = Files.newBufferedWriter(inputFile, StandardCharsets.UTF_8);
 				)
-
 		{
 			JSONWriter.toJSON(inputFile.toString(), index, bufferedWriter);
 		}
-
 	}
 
 	
@@ -117,7 +113,7 @@ public class InvertedIndex {
 	 */
 	public boolean hasPath(String word, String path)
 	{
-		if (index.get(word).containsValue(path))
+		if ( index.get(word).containsValue(path) )
 		{
 			return true;
 		}
@@ -135,13 +131,12 @@ public class InvertedIndex {
 	 */
 	public void addAll(ArrayList<String> wordsToAdd)
 	{
-		for(int i = 0; i < wordsToAdd.size(); i++)
+		for ( int i = 0; i < wordsToAdd.size(); i++ )
 		{
 			index.put(wordsToAdd.get(i), null);
 		}
 	}
 	
-
 	/**
 	 * Prints inverted index to string 
 	 * 
@@ -172,18 +167,13 @@ public class InvertedIndex {
 		int frequency = 0;
 		int initialPosition = 0;	
 
-		// TODO Formatting
-		for (String query: queries)
+		for ( String query: queries )
 		{
 			for ( String word: index.tailMap(query).keySet() )
 			{
-				// TODO for (String path : index.get(word).keySet())
-				for(String path: index.tailMap(query).get(word).keySet())
+				if ( word.startsWith(query) )
 				{
-					// TODO You check this for every path associated with this word. Just need to check once for the word.
-					// TODO Move this if outside the for(path)
-					// TODO Then break if it no longer starts with the query.
-					if(word.startsWith(query))
+					for ( String path : index.get(word).keySet() )
 					{
 						fileName = path;
 						frequency = index.get(word).get(path).size();
@@ -202,42 +192,16 @@ public class InvertedIndex {
 						}
 					}
 				}
-			}
-		}
-		
-		//sorts all serch result objects created using custom comparator
-		Collections.sort(searchResults);
-		return searchResults;
-	}
-
-
-	// TODO Go ahead and remove
-	/**
-	 * Helper method to obtain all words in inverted index that start
-	 * with given query words 
-	 * 
-	 * @param queries
-	 *            queries to check for in inverted index
-	 * @return List of strings of words that begin with given queries
-	 */
-	public List<String> indexWordChecker(String[] queries)
-	{
-		Object[] first;
-		List<String> words = new ArrayList<String>();
-
-		first = index.keySet().toArray();
-
-		for ( int j = 0; j < queries.length; j++ )
-		{
-			for ( int i = 0; i < first.length; i++ )
-			{
-				if ( first[i].toString().startsWith(queries[j]) )
+				else
 				{
-					words.add(first[i].toString());
+					break;
 				}
 			}
 		}
-		return words;
+		
+		//sorts all search result objects created using custom comparator
+		Collections.sort(searchResults);
+		return searchResults;
 	}
 	
 }

@@ -1,11 +1,11 @@
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -83,7 +83,7 @@ public class JSONWriter {
 
 			//For loop traverses through and writes words stored in inverted index
 			int wordCounter = 0;
-			for (Entry<String, TreeMap<String, TreeSet<Integer>>> entry: elements.tailMap(first.getKey(), true).entrySet())
+			for ( Entry<String, TreeMap<String, TreeSet<Integer>>> entry: elements.tailMap(first.getKey(), true).entrySet() )
 			{
 				bufferedWriter.write(System.lineSeparator());
 				bufferedWriter.write(indent(1));
@@ -94,7 +94,7 @@ public class JSONWriter {
 
 				int textCounter = 0;
 				//For loop traverses through and writes text file names stored in inverted index
-				for (Entry<String, TreeSet<Integer>> secondEntry: entry.getValue().entrySet())
+				for ( Entry<String, TreeSet<Integer>> secondEntry: entry.getValue().entrySet() )
 				{
 					bufferedWriter.write(System.lineSeparator());
 					bufferedWriter.write(indent(2));
@@ -105,9 +105,9 @@ public class JSONWriter {
 
 					int positionCounter = 0;
 					//For loop traverses through and writes positions stored in inverted index
-					for(Integer thirdEntry: secondEntry.getValue().tailSet(secondEntry.getValue().iterator().next(), true))
+					for ( Integer thirdEntry: secondEntry.getValue().tailSet(secondEntry.getValue().iterator().next(), true) )
 					{
-						if (positionCounter!=0 && positionCounter< secondEntry.getValue().size())
+						if ( positionCounter!=0 && positionCounter< secondEntry.getValue().size() )
 						{
 							bufferedWriter.write(",");
 						}
@@ -120,7 +120,7 @@ public class JSONWriter {
 					bufferedWriter.write(indent(2));
 					bufferedWriter.write("]");
 					textCounter++;
-					if (entry.getValue().size()>1 && textCounter<entry.getValue().size())
+					if ( entry.getValue().size()>1 && textCounter<entry.getValue().size() )
 					{
 						bufferedWriter.write(",");
 					}
@@ -130,7 +130,7 @@ public class JSONWriter {
 				bufferedWriter.write(indent(1));
 				bufferedWriter.write("}");
 				wordCounter++;
-				if (elements.size()>1 && wordCounter<elements.size())
+				if ( elements.size()>1 && wordCounter<elements.size() )
 				{
 					bufferedWriter.write(",");
 				}
@@ -144,145 +144,92 @@ public class JSONWriter {
 	}
 	
 	
-	/**
-	 * Writes the search result objects as a JSON object with list values to the
-	 * specified output path. The output is in a
-	 * "pretty" format with 2 spaces per indent level.
-	 * 
-	 * <pre>
-	 * {
-	 *   "Line"(Query): [
-	 *     {
-	 *       "where": "file name",
-	 *       "count": frequency,
-	 *       "index": initialPosition
-	 *     },
-	 *     {
-	 *       "where": "file name",
-	 *       "count": frequency,
-	 *       "index": initialPosition
-	 *     }
-	 *   ]
-	 * }
-	 * </pre>
-	 * 
-	 * @param searchResults
-	 *            List of search results to write to given
-	 *            file outputFile
-	 * @param outputFile
-	 *            file to write to as a JSON object
-	 * @param line
-	 *            query words given for list of search results
-	 * @param bufferedWriter
-	 *            BufferedWriter to write to file given
-	 * @param lastLine
-	 *            line that determines when to exclude ","
-	 * @param firstLine
-	 *            line that determines when to include "{"
-	 * @throws IOException  
-	 */
-	public static void resultsToJSON(List<SearchResult> searchResults, String outputFile, String line, 
-			BufferedWriter bufferedWriter, boolean lastLine, boolean firstLine) throws IOException
-	{
-
-		if ( firstLine )
-		{
-			bufferedWriter.write("{");
-		}
-
-		bufferedWriter.write(System.lineSeparator());
-		bufferedWriter.write(indent(1));
-		bufferedWriter.write(quote(line));
-
-		bufferedWriter.write(":");
-		bufferedWriter.write(" ");
-		bufferedWriter.write("[");
-
-		if ( !searchResults.isEmpty() )
-		{
-			for ( int i = 0; i < searchResults.size(); i++ )
-			{
-				bufferedWriter.write(System.lineSeparator());
-				bufferedWriter.write(indent(2));
-				bufferedWriter.write("{");
-
-				//writes file name
-				bufferedWriter.write(System.lineSeparator());
-				bufferedWriter.write(indent(3));
-				bufferedWriter.write(quote("where"));
-				bufferedWriter.write(": ");
-				bufferedWriter.write(quote(searchResults.get(i).getFileName()));
-				bufferedWriter.write(",");
-
-				//writes count/frequency
-				bufferedWriter.write(System.lineSeparator());
-				bufferedWriter.write(indent(3));
-				bufferedWriter.write(quote("count"));
-				bufferedWriter.write(": ");
-				bufferedWriter.write(String.valueOf(searchResults.get(i).getFrequency()));
-				bufferedWriter.write(",");
-
-				//writes index/initial position
-				bufferedWriter.write(System.lineSeparator());
-				bufferedWriter.write(indent(3));
-				bufferedWriter.write(quote("index"));
-				bufferedWriter.write(": ");
-				bufferedWriter.write(String.valueOf(searchResults.get(i).getInitialPosition()));
-
-				bufferedWriter.write(System.lineSeparator());
-				bufferedWriter.write(indent(2));
-				bufferedWriter.write("}");
-
-				if (i != searchResults.size()-1 )
-				{
-					bufferedWriter.write(",");
-				}
-
-				if ( i == searchResults.size()-1 )
-				{
-					bufferedWriter.write(System.lineSeparator());
-					bufferedWriter.write(indent(1));
-					bufferedWriter.write("]");
-					if ( !lastLine )
-					{
-						bufferedWriter.write(",");
-					}
-				}
-			}
-		}
-		if ( searchResults.isEmpty() )
-		{
-			bufferedWriter.write(System.lineSeparator());
-			bufferedWriter.write(indent(1));
-			bufferedWriter.write("]");
-			if ( !lastLine )
-			{
-				bufferedWriter.write(",");
-			}
-		}
-		if ( lastLine )
-		{
-			bufferedWriter.write(System.lineSeparator());
-			bufferedWriter.write(indent(0));
-			bufferedWriter.write("}");
-		}
-	}
-	
-	/*
-	public void toJSON(BufferedWriter writer, LinkedHashMap<String, List<SearchResult>> map) throws IOException {
+	public static void resultsToJSON(BufferedWriter bufferedWriter, LinkedHashMap<String, List<SearchResult>> map) throws IOException {
 		Iterator<String> i = map.keySet().iterator();
 		
-		while (i.hasNext()) {
+		bufferedWriter.write("{");
+		
+		while ( i.hasNext() ) {
 			
 			String key = i.next();
 			
-			if (i.hasNext()) {
-				this is not the last line
+			bufferedWriter.write(System.lineSeparator());
+			bufferedWriter.write(indent(1));
+			bufferedWriter.write(quote(key));
+
+			bufferedWriter.write(":");
+			bufferedWriter.write(" ");
+			bufferedWriter.write("[");
+			
+			if ( !map.get(key).isEmpty() )
+			{
+				for ( int k = 0; k<map.get(key).size(); k++ )
+				{
+					bufferedWriter.write(System.lineSeparator());
+					bufferedWriter.write(indent(2));
+					bufferedWriter.write("{");
+
+					//writes file name
+					bufferedWriter.write(System.lineSeparator());
+					bufferedWriter.write(indent(3));
+					bufferedWriter.write(quote("where"));
+					bufferedWriter.write(": ");
+					bufferedWriter.write(quote(map.get(key).get(k).getFileName()));
+					bufferedWriter.write(",");
+
+					//writes count/frequency
+					bufferedWriter.write(System.lineSeparator());
+					bufferedWriter.write(indent(3));
+					bufferedWriter.write(quote("count"));
+					bufferedWriter.write(": ");
+					bufferedWriter.write(String.valueOf(map.get(key).get(k).getFrequency()));
+					bufferedWriter.write(",");
+
+					//writes index/initial position
+					bufferedWriter.write(System.lineSeparator());
+					bufferedWriter.write(indent(3));
+					bufferedWriter.write(quote("index"));
+					bufferedWriter.write(": ");
+					bufferedWriter.write(String.valueOf(map.get(key).get(k).getInitialPosition()));
+
+					bufferedWriter.write(System.lineSeparator());
+					bufferedWriter.write(indent(2));
+					bufferedWriter.write("}");
+					
+					if ( k != map.get(key).size()-1 )
+					{
+						bufferedWriter.write(",");
+					}
+
+					if ( k == map.get(key).size()-1 )
+					{
+						bufferedWriter.write(System.lineSeparator());
+						bufferedWriter.write(indent(1));
+						bufferedWriter.write("]");
+						if ( i.hasNext() )
+						{
+							bufferedWriter.write(",");
+						}
+					}
+				}
 			}
-			else {
-				this is the last line
+			if ( map.get(key).isEmpty() )
+			{
+				bufferedWriter.write(System.lineSeparator());
+				bufferedWriter.write(indent(1));
+				bufferedWriter.write("]");
+				if ( i.hasNext() )
+				{
+					bufferedWriter.write(",");
+				}
+			}
+			
+			if ( !i.hasNext() ) {
+				bufferedWriter.write(System.lineSeparator());
+				bufferedWriter.write(indent(0));
+				bufferedWriter.write("}");
 			}
 		}
 	}
-	*/
+	
 }

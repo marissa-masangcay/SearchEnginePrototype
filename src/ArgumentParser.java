@@ -50,23 +50,23 @@ public class ArgumentParser {
 	 * @see #isValue(String)
 	 */
 	public void parseArguments(String[] args) {
-		for (int i = 0; i < args.length; i++)
+		for ( int i = 0; i < args.length; i++ )
 		{			
-			if (isFlag( args[i] ))
+			if ( isFlag( args[i] ) )
 			{
-				if (i == (args.length - 1))
+				if ( i == (args.length - 1) )
 				{
 					argumentMap.put(args[i], null);
 				}
 				else
 				{
-					if (!isFlag(args[i + 1]))
+					if ( !isFlag(args[i + 1]) )
 					{
 						argumentMap.put(args[i], args[i + 1]); 
 						i++;
 					}
 
-					else if (isFlag(args[i + 1]))
+					else if ( isFlag(args[i + 1]) )
 					{
 						argumentMap.put(args[i], null);
 					}
@@ -137,10 +137,10 @@ public class ArgumentParser {
 	 * @return true if the flag exists and has a non-null non-empty value
 	 */
 	public boolean hasValue(String flag) {
-		if (argumentMap.containsKey( flag ))
+		if ( argumentMap.containsKey( flag ) )
 		{
 			String flagValue = argumentMap.get( flag );
-			if (flagValue != null)
+			if ( flagValue != null )
 			{
 				return true;
 			}
@@ -156,7 +156,7 @@ public class ArgumentParser {
 	 * @return value of flag or null if flag does not exist or has no value
 	 */
 	public String getValue(String flag) {
-		if (argumentMap.containsKey( flag ))
+		if ( argumentMap.containsKey( flag ) )
 		{
 			return argumentMap.get( flag );
 		}
@@ -165,14 +165,7 @@ public class ArgumentParser {
 			return null;
 		}
 	}
-
-	/* TODO
-	public String getOrDefault(String flag, String defaultValue) {
-		// try to use argumentMap.getOrDefault(flag, defaultValue)
-	}
-	*/
 	
-	// TODO Can add other stuff like... public boolean isDirectory(String flag), isValidPath(String flag)
 	
 	@Override
 	public String toString() {

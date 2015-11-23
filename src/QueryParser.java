@@ -1,41 +1,35 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
- * This class instantiates a private list that will store the provided queries
+ * This class instantiates a private LinkedHashMap that will store the provided queries
  * given through the command line arguments, assuming that the input is valid.
  * It also stores a private map that stores the given queries matched with the
  * appropriate search result objects.
  */
 public class QueryParser {
 	
-	// TODO Javadoc members and constructor
+	/**Initializes a LinkedHashMap to store query lines and matching
+	 * search results*/
+	private final LinkedHashMap<String, List<SearchResult>> results;
 	
-	// TODO Use a LinkedHashMap instead of separate List and Map objects
-	private final Map<String, List<SearchResult>> results;
-	private final List<String> lines;
-	
+	/**Initializes an inverted index*/
 	private final InvertedIndex invertedIndex;
 	
-	
+
+	/**Initializes a Query Parser object as well as an empty results map
+	  and an inverted index*/
 	public QueryParser(InvertedIndex inputInvertedIndex)
 	{
-		results = new HashMap<String, List<SearchResult>>();
-		lines = new ArrayList<String>();
+		results = new LinkedHashMap<String, List<SearchResult>>();
 		invertedIndex = inputInvertedIndex;
 	}
 	
@@ -51,12 +45,11 @@ public class QueryParser {
 	 *            file to write search result objects to
 	 * @return 
 	 */
-	public void parseFile(String path, String outputPath) throws IOException
-	{
-				
+	public void parseFile(String path) throws IOException
+	{			
 		Path inputPath = Paths.get(path);
 		
-		try(BufferedReader bufferedReader = Files.newBufferedReader(inputPath, StandardCharsets.UTF_8))
+		try (BufferedReader bufferedReader = Files.newBufferedReader(inputPath, StandardCharsets.UTF_8))
 		{
 			String line;
 			
@@ -83,7 +76,6 @@ public class QueryParser {
 		List<SearchResult> partialSearch;
 		
 		String[] cleanedSplitLine = InvertedIndexBuilder.split(line);
-		lines.add(line);
 		partialSearch = invertedIndex.partialSearch(cleanedSplitLine);
 		results.put(line, partialSearch);
 	}
@@ -101,28 +93,11 @@ public class QueryParser {
 	public void writeToFile(String outputPath) throws IOException 
 	{
 		
-		int i = 0;
-		boolean lastLine = false;
-		boolean firstLine = true;
-		
-		try (
-			// BufferedWriter bufferedWriter = Files.newBufferedWriter(...);
-				
-				BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter
-						(new FileOutputStream(outputPath.toString()), "UTF8"));
+		try (	
+				BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(outputPath) , StandardCharsets.UTF_8);
 				)
 		{
-			for ( String line: lines )
-			{
-				List<SearchResult> result = results.get(line);
-				JSONWriter.resultsToJSON(result, outputPath, line, bufferedWriter, lastLine, firstLine);
-				i++;
-				firstLine = false;
-				if ( i==lines.size()-1 )
-				{
-					lastLine = true;
-				}
-			}
+			JSONWriter.resultsToJSON(bufferedWriter, results);
 		}
 
 	}

@@ -1,7 +1,5 @@
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -47,7 +45,7 @@ public class InvertedIndexBuilder {
 	public static String[] split(String text) {
 		String[] textSplit = new String[0];
 		text = clean(text);
-		if (!text.isEmpty() )
+		if ( !text.isEmpty() )
 		{
 			textSplit = text.split(SPLIT_REGEX);
 		}
@@ -68,7 +66,7 @@ public class InvertedIndexBuilder {
 		int position = 0;
 		Path path = Paths.get(inputPath);
 
-		try( BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8))
+		try ( BufferedReader bufferedReader = Files.newBufferedReader(path, StandardCharsets.UTF_8))
 		{
 			Path inputFile = Paths.get(inputPath);
 			String line;

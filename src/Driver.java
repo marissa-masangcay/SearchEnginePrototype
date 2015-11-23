@@ -106,16 +106,6 @@ public class Driver {
      */
     public static void main(String[] args) throws IOException {
         
-        // TODO Try to simplify Driver
-        /*
-        if (input flag) do stuff
-        if (search flag) do stuff
-        
-        then handle output
-        if (index flag) do stuff
-        if (result flag) do stuff
-        */
-        
         ArgumentParser argumentParser = new ArgumentParser(args);
         InvertedIndex invertedIndex = new InvertedIndex();
         QueryParser queryParser = new QueryParser(invertedIndex);
@@ -126,9 +116,9 @@ public class Driver {
         Path resultsFile = null;
         Path queriesFile = null;
         
-        try{        
+        try{  
+        	
             //input = directory to traverse through
-        	//if args has an input flag
             if(argumentParser.hasFlag(INPUT_FLAG))
             {
             	//if input flag has a value
@@ -142,6 +132,11 @@ public class Driver {
             		{
             			System.err.println("Invalid directory");
             		}
+            		else
+            		{
+            			//Traverses through the directory given by user
+                   		InvertedIndexBuilder.traverse(directory, invertedIndex);
+            		}
             	}
             	else //if input flag has no value
             	{
@@ -149,13 +144,13 @@ public class Driver {
             	}	
             }
             //if args has no input flag
-            else if(!argumentParser.hasFlag(INPUT_FLAG))
+            else
             {
             	System.err.println("No directory found, please enter a directory");
             }
             
+            
             //index = file name to print to
-            //if args has an index flag
             if(argumentParser.hasFlag(INDEX_FLAG))
             {
             	//if index flag has a value
@@ -174,10 +169,12 @@ public class Driver {
             	{
             		outputFile = Paths.get(INDEX_DEFAULT);
             	}
+            	
+            	//Writes to the appropriate text file, if provided
+            	invertedIndex.writeIndexToFile(outputFile.toString());
             }
             
             //query = file name to obtain queries from
-            //if args has a query flag
             if (argumentParser.hasFlag(QUERIES_FLAG))
             {
             	if (argumentParser.getValue(QUERIES_FLAG) != null)
@@ -188,11 +185,15 @@ public class Driver {
             		{
             			System.err.println("Invalid query file");
             		}
+            		else
+            		{
+            			//parses files for queries
+            			queryParser.parseFile(queriesFile.toString());
+            		}
             	}
             }
             
             //results = file name to print query results to
-            //if args has a results flag
             if (argumentParser.hasFlag(RESULTS_FLAG))
             {
             	if (argumentParser.getValue(RESULTS_FLAG) != null)
@@ -209,32 +210,13 @@ public class Driver {
             	{
             		resultsFile = Paths.get(RESULTS_DEFAULT);
             	}
-            }
-
-
-            //Traverses through the directory given by user
-            InvertedIndexBuilder.traverse(directory, invertedIndex);
-            
-            if (argumentParser.hasFlag(INDEX_FLAG))
-            {
-            	 //Writes to the appropriate text file, if provided
-                invertedIndex.writeIndexToFile(outputFile.toString());
-            }
-            
-            if (argumentParser.hasFlag(QUERIES_FLAG))
-            {
-            	queryParser.parseFile(queriesFile.toString(), resultsFile.toString());
-            }
-            
-            if(argumentParser.hasFlag(RESULTS_FLAG))
-            {
+            	//writes query results to file
             	queryParser.writeToFile(resultsFile.toString());
             }
             
 
-        } catch (NullPointerException e) { 
+        } catch ( NullPointerException e ) { 
         	System.err.println("No input found");
-        }
-        
+        } 
     }
 }
