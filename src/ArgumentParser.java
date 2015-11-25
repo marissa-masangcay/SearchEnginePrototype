@@ -166,6 +166,12 @@ public class ArgumentParser {
 		}
 	}
 	
+	/*
+	public String getOrDefault(String flag, String defaultValue) {
+		// return the value of flag if it exists, otherwise the default value
+		// see argumentMap.getOrDefault()
+	}
+	*/
 	
 	@Override
 	public String toString() {
