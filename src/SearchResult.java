@@ -79,7 +79,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	 */
 	public boolean addFrequency(int frequency)
 	{
-		if ( frequency>=0 )
+		if ( frequency >= 0 )
 		{
 			this.frequency = this.frequency + frequency;
 			return true;
@@ -99,7 +99,7 @@ public class SearchResult implements Comparable<SearchResult> {
 	 */
 	public boolean updatePosition(int position)
 	{
-		if ( position< this.initialPosition && position>0 )
+		if ( position < this.initialPosition && position > 0 )
 		{
 			this.initialPosition = position;
 			return true;
