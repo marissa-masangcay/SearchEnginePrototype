@@ -166,12 +166,24 @@ public class ArgumentParser {
 		}
 	}
 	
-	/*
+	/**
+	 * Returns the value of a flag if it exists or the default value otherwise.
+	 *
+	 * @param flag flag to check
+	 * @param defaultValue flag's default value
+	 * @return value of flag or default value if flag has no value
+	 */
 	public String getOrDefault(String flag, String defaultValue) {
-		// return the value of flag if it exists, otherwise the default value
-		// see argumentMap.getOrDefault()
+		if ( getValue( flag ) != null )
+       	{
+			return argumentMap.get( flag );
+		}
+		else
+		{
+			return defaultValue;
+		}
 	}
-	*/
+	
 	
 	@Override
 	public String toString() {

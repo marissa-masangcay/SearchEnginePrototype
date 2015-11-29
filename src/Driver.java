@@ -153,26 +153,15 @@ public class Driver {
             //index = file name to print to
             if(argumentParser.hasFlag(INDEX_FLAG))
             {
-            	//if index flag has a value
-            	if(argumentParser.getValue(INDEX_FLAG)!=null)
+            	outputFile = Paths.get(argumentParser.getOrDefault(INDEX_FLAG, INDEX_DEFAULT));
+            	if ( !outputFile.isAbsolute() )
             	{
-            		Path userInputFile = Paths.get(argumentParser.getValue(INDEX_FLAG));
-            		//if index flag value is not valid
-                	if(!userInputFile.isAbsolute())
-                	{
-                		System.err.println("Invalid file");
-                	}
-                	outputFile = userInputFile;
+            		System.err.println("Invalid file");
             	}
-            	//if index flag has no value
-            	else
-            	{
-            		outputFile = Paths.get(INDEX_DEFAULT);
-            	}
-            	
             	//Writes to the appropriate text file, if provided
             	invertedIndex.writeIndexToFile(outputFile.toString());
             }
+            
             
             //query = file name to obtain queries from
             if (argumentParser.hasFlag(QUERIES_FLAG))
@@ -193,25 +182,17 @@ public class Driver {
             	}
             }
             
+            
             //results = file name to print query results to
             if (argumentParser.hasFlag(RESULTS_FLAG))
             {
-            	if (argumentParser.getValue(RESULTS_FLAG) != null)
+            	resultsFile = Paths.get(argumentParser.getOrDefault(RESULTS_FLAG, RESULTS_DEFAULT));
+            	if ( !resultsFile.isAbsolute() )
             	{
-            		resultsFile = Paths.get(argumentParser.getValue(RESULTS_FLAG));
-            		//if results flag is not valid
-            		if (!resultsFile.isAbsolute())
-            		{
-            			System.err.println("Invalid results file");
-            		}
-            	}
-            	//if no results file path provided
-            	else
-            	{
-            		resultsFile = Paths.get(RESULTS_DEFAULT);
+            		System.err.println("Invalid results file");
             	}
             	//writes query results to file
-            	queryParser.writeToFile(resultsFile.toString());
+                queryParser.writeToFile(resultsFile.toString());
             }
             
 
