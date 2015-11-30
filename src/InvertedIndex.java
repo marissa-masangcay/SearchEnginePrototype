@@ -16,7 +16,6 @@ import java.util.TreeSet;
 
 public class InvertedIndex {
 
-	
 	/** Stores all words found without special characters as keys in outermost map,
 	  * Stores the text files found with the associated key as the value for the 
 	  * outermost map and as the key for the second nested map.
