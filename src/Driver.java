@@ -115,10 +115,11 @@ public class Driver {
         Path outputFile = null;
         Path resultsFile = null;
         Path queriesFile = null;
+        int numberOfThreads = -1;
         
         try{  
         	
-            //input = directory to traverse through
+            /**input = directory to traverse through*/
             if(argumentParser.hasFlag(INPUT_FLAG))
             {
             	//if input flag has a value
@@ -150,7 +151,19 @@ public class Driver {
             }
             
             
-            //index = file name to print to
+            /**thread = number of threads to use*/
+            if(argumentParser.hasFlag(THREAD_FLAG))
+            {
+            	numberOfThreads = Integer.parseInt(argumentParser.getValue(THREAD_FLAG));
+            	if ( numberOfThreads <= 0 )
+            	{
+            		numberOfThreads = THREAD_DEFAULT;
+            	}
+            		
+            }
+            
+            
+            /**index = file name to print to*/
             if(argumentParser.hasFlag(INDEX_FLAG))
             {
             	outputFile = Paths.get(argumentParser.getOrDefault(INDEX_FLAG, INDEX_DEFAULT));
@@ -163,7 +176,7 @@ public class Driver {
             }
             
             
-            //query = file name to obtain queries from
+            /**query = file name to obtain queries from*/
             if (argumentParser.hasFlag(QUERIES_FLAG))
             {
             	if (argumentParser.getValue(QUERIES_FLAG) != null)
@@ -183,7 +196,7 @@ public class Driver {
             }
             
             
-            //results = file name to print query results to
+            /**results = file name to print query results to*/
             if (argumentParser.hasFlag(RESULTS_FLAG))
             {
             	resultsFile = Paths.get(argumentParser.getOrDefault(RESULTS_FLAG, RESULTS_DEFAULT));
@@ -194,6 +207,7 @@ public class Driver {
             	//writes query results to file
                 queryParser.writeToFile(resultsFile.toString());
             }
+          
             
 
         } catch ( NullPointerException e ) { 

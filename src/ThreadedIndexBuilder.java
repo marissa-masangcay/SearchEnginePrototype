@@ -2,7 +2,6 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,8 +18,8 @@ public class ThreadedIndexBuilder {
      * Initializes this multithreaded file parser. The underlying work queue
      * will be active until {@link #shutdown()} is called.
      */
-    public ThreadedIndexBuilder() {
-        workers = new WorkQueue();  
+    public ThreadedIndexBuilder(int numberOfThreads) {
+        workers = new WorkQueue(numberOfThreads);  
         pending = 0;
     }
     
