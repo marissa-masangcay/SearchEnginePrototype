@@ -109,6 +109,10 @@ public class Driver {
         ArgumentParser argumentParser = new ArgumentParser(args);
         InvertedIndex invertedIndex = new InvertedIndex();
         QueryParser queryParser = new QueryParser(invertedIndex);
+        ThreadedInvertedIndex threadedInvertedIndex = null;
+        ThreadedIndexBuilder threadedIndexBuilder = null;
+        ThreadedQueryParser threadedQueryParser = null;
+       
                
         String directoryToTraverse = null;
         Path directory = null;
@@ -116,9 +120,30 @@ public class Driver {
         Path resultsFile = null;
         Path queriesFile = null;
         int numberOfThreads = -1;
+        Boolean threaded = false;
         
         try{  
         	
+        	 /**thread = number of threads to use*/
+        	if ( argumentParser.hasFlag(THREAD_FLAG) )
+        	{
+        		threaded = true;
+        		try {
+        			numberOfThreads = Integer.parseInt(argumentParser.getValue(THREAD_FLAG));
+        		} catch (NumberFormatException e) {
+        			numberOfThreads = THREAD_DEFAULT;
+        		}
+        		 catch (NullPointerException e ) {
+        			 numberOfThreads = THREAD_DEFAULT;
+        		 }
+        		
+        		threadedInvertedIndex = new ThreadedInvertedIndex();
+                threadedIndexBuilder = new ThreadedIndexBuilder(numberOfThreads);
+                threadedQueryParser = new ThreadedQueryParser(threadedInvertedIndex, numberOfThreads);
+        	}
+        	
+            
+            
             /**input = directory to traverse through*/
             if(argumentParser.hasFlag(INPUT_FLAG))
             {
@@ -135,8 +160,17 @@ public class Driver {
             		}
             		else
             		{
-            			//Traverses through the directory given by user
-                   		InvertedIndexBuilder.traverse(directory, invertedIndex);
+            			if ( !threaded )
+            			{
+            				//Traverses through the directory given by user
+                       		InvertedIndexBuilder.traverse(directory, invertedIndex);
+            			}
+            			else if ( threaded )
+            			{
+            				threadedIndexBuilder.traverse(directory, threadedInvertedIndex);
+            			}
+//            			//Traverses through the directory given by user
+//                   		InvertedIndexBuilder.traverse(directory, invertedIndex);
             		}
             	}
             	else //if input flag has no value
@@ -150,17 +184,6 @@ public class Driver {
             	System.err.println("No directory found, please enter a directory");
             }
             
-            
-            /**thread = number of threads to use*/
-            if(argumentParser.hasFlag(THREAD_FLAG))
-            {
-            	numberOfThreads = Integer.parseInt(argumentParser.getValue(THREAD_FLAG));
-            	if ( numberOfThreads <= 0 )
-            	{
-            		numberOfThreads = THREAD_DEFAULT;
-            	}
-            		
-            }
             
             
             /**index = file name to print to*/
@@ -189,8 +212,17 @@ public class Driver {
             		}
             		else
             		{
-            			//parses files for queries
-            			queryParser.parseFile(queriesFile.toString());
+            			if ( !threaded )
+            			{
+            				//parses files for queries
+                			queryParser.parseFile(queriesFile.toString());
+            			}
+            			else if ( threaded )
+            			{
+            				threadedQueryParser.parseFile(queriesFile.toString());
+            			}
+//            			//parses files for queries
+//            			queryParser.parseFile(queriesFile.toString());
             		}
             	}
             }

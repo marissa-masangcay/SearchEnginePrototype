@@ -189,28 +189,24 @@ public class ThreadedQueryParser {
 
 		@Override
 		public void run() {
-			try {
-				parseLine(line);
-			} catch (IOException e) {
-				e.printStackTrace();
+			synchronized(results){
+				try {
+					parseLine(line);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+//			try {
+//				parseLine(line);
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
 			decrementPending();
 		}
 		
 
 	}
 	
-//	@Override 
-//	public boolean add(E element)
-//	{
-//		lock.lockReadWrite();
-//		try{
-//			return super.add(E element);
-//		}
-//		finally{
-//			unlock.lockReadWrite();
-//		}
-//	}
 
 }
 

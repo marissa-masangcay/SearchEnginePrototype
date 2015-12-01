@@ -7,6 +7,8 @@ import java.util.List;
 
 public class ThreadedInvertedIndex extends InvertedIndex {
 	
+	ReadWriteLock lock = new ReadWriteLock();
+	
 	/** Instantiates the inverted index*/
 	public ThreadedInvertedIndex()
 	{
@@ -29,12 +31,18 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	@Override
 	public void add(String word, String text, int position)
 	{
-		synchronized ( this ) 
-		{
+//		synchronized ( this ) 
+//		{
+//			super.add(word, text, position);
+//		}
+		lock.lockReadWrite();
+		try{
 			super.add(word, text, position);
 		}
+		finally{
+			lock.unlockReadWrite();
+		}
 	}
-	
 	
 	
 	/**
@@ -51,9 +59,16 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	public void writeIndexToFile(String output) throws UnsupportedEncodingException, FileNotFoundException, IOException
 	{
-		synchronized ( this )
-		{
+//		synchronized ( this )
+//		{
+//			super.writeIndexToFile(output);
+//		}
+		lock.lockReadWrite();
+		try{
 			super.writeIndexToFile(output);
+		}
+		finally{
+			lock.unlockReadWrite();
 		}
 	}
 
@@ -67,9 +82,16 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	public boolean hasWord(String word)
 	{
-		synchronized ( this )
-		{
+//		synchronized ( this )
+//		{
+//			return super.hasWord(word);
+//		}
+		lock.lockReadOnly();
+		try{
 			return super.hasWord(word);
+		}
+		finally{
+			lock.unlockReadOnly();
 		}
 	}
 	
@@ -85,11 +107,19 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	public boolean hasPath(String word, String path)
 	{
-		synchronized ( this )
-		{
+//		synchronized ( this )
+//		{
+//			return super.hasPath(word, path);
+//		}
+		lock.lockReadOnly();
+		try{
 			return super.hasPath(word, path);
 		}
+		finally{
+			lock.unlockReadOnly();
+		}
 	}
+	
 
 	/**
 	 * Adds all words within the given array list to the inverted index 
@@ -99,9 +129,16 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	public void addAll(ArrayList<String> wordsToAdd)
 	{
-		synchronized ( this )
-		{
+//		synchronized ( this )
+//		{
+//			super.addAll(wordsToAdd);
+//		}
+		lock.lockReadWrite();
+		try{
 			super.addAll(wordsToAdd);
+		}
+		finally{
+			lock.unlockReadWrite();
 		}
 	}
 	
@@ -113,9 +150,16 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	@Override
 	public String toString() 
 	{
-		synchronized ( this )
-		{
+//		synchronized ( this )
+//		{
+//			return super.toString();
+//		}
+		lock.lockReadWrite();
+		try{
 			return super.toString();
+		}
+		finally{
+			lock.unlockReadWrite();
 		}
 	}
 	
@@ -131,11 +175,31 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	public List<SearchResult> partialSearch(String[] queries) throws IOException
 	{
-		synchronized ( this )
-		{
+//		synchronized ( this )
+//		{
+//			return super.partialSearch(queries);
+//		}
+		lock.lockReadWrite();
+		try{
 			return super.partialSearch(queries);
 		}
+		finally{
+			lock.unlockReadWrite();
+		}
 	}
+	
+	
+//	@Override 
+//	public boolean add(E element)
+//	{
+//		lock.lockReadWrite();
+//		try{
+//			return super.add(E element);
+//		}
+//		finally{
+//			unlock.lockReadWrite();
+//		}
+//	}
 	
 	
 
