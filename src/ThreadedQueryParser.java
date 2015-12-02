@@ -26,7 +26,7 @@ public class ThreadedQueryParser {
 	private final LinkedHashMap<String, List<SearchResult>> results;
 
 	/**Initializes an inverted index*/
-	private final InvertedIndex invertedIndex;
+	private final ThreadedInvertedIndex invertedIndex;
 	
 	/** Work queue used to handle multithreading for this class. */
 	private final WorkQueue workers;
@@ -37,7 +37,7 @@ public class ThreadedQueryParser {
 
 	/**Initializes a Query Parser object as well as an empty results map
 		  and an inverted index*/
-	public ThreadedQueryParser(InvertedIndex inputInvertedIndex, int numberOfThreads)
+	public ThreadedQueryParser(ThreadedInvertedIndex inputInvertedIndex, int numberOfThreads)
 	{
 		results = new LinkedHashMap<String, List<SearchResult>>();
 		invertedIndex = inputInvertedIndex;
@@ -124,7 +124,6 @@ public class ThreadedQueryParser {
 			while ( (line = bufferedReader.readLine()) != null ) 
 			{
 //				//iterates through lines of queries from files
-//				parseLine(line);
 				workers.execute(new QueryMinion(line));
 			}
 		}
@@ -180,33 +179,31 @@ public class ThreadedQueryParser {
 	private class QueryMinion implements Runnable {
 
 		private String line;
+		private ReadWriteLock lock;
 
 		public QueryMinion(String line) {
 			logger.debug("Minion created for {}", line);
 			this.line = line;
+			lock = new ReadWriteLock();
 			incrementPending();
 		}
 
 		@Override
 		public void run() {
-			synchronized(results){
+			lock.lockReadWrite();
 				try {
 					parseLine(line);
 				} catch (IOException e) {
 					e.printStackTrace();
+				} finally {
+					lock.unlockReadWrite();
 				}
+				decrementPending();
 			}
-//			try {
-//				parseLine(line);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-			decrementPending();
+			
 		}
-		
-
-	}
+}
 	
 
-}
+
 

@@ -169,8 +169,6 @@ public class Driver {
             			{
             				threadedIndexBuilder.traverse(directory, threadedInvertedIndex);
             			}
-//            			//Traverses through the directory given by user
-//                   		InvertedIndexBuilder.traverse(directory, invertedIndex);
             		}
             	}
             	else //if input flag has no value
@@ -194,8 +192,15 @@ public class Driver {
             	{
             		System.err.println("Invalid file");
             	}
-            	//Writes to the appropriate text file, if provided
-            	invertedIndex.writeIndexToFile(outputFile.toString());
+
+            	if ( !threaded )
+            	{
+            		invertedIndex.writeIndexToFile(outputFile.toString());
+            	}
+            	else if ( threaded )
+            	{
+            		threadedInvertedIndex.writeIndexToFile(outputFile.toString());
+            	}
             }
             
             
@@ -221,8 +226,6 @@ public class Driver {
             			{
             				threadedQueryParser.parseFile(queriesFile.toString());
             			}
-//            			//parses files for queries
-//            			queryParser.parseFile(queriesFile.toString());
             		}
             	}
             }
@@ -236,8 +239,15 @@ public class Driver {
             	{
             		System.err.println("Invalid results file");
             	}
-            	//writes query results to file
-                queryParser.writeToFile(resultsFile.toString());
+
+            	if ( !threaded )
+            	{
+            		queryParser.writeToFile(resultsFile.toString());
+            	}
+            	else if ( threaded )
+            	{
+            		threadedQueryParser.writeToFile(resultsFile.toString());
+            	}
             }
           
             

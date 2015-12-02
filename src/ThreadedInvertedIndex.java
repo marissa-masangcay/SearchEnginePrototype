@@ -31,10 +31,6 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	@Override
 	public void add(String word, String text, int position)
 	{
-//		synchronized ( this ) 
-//		{
-//			super.add(word, text, position);
-//		}
 		lock.lockReadWrite();
 		try{
 			super.add(word, text, position);
@@ -59,10 +55,6 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	public void writeIndexToFile(String output) throws UnsupportedEncodingException, FileNotFoundException, IOException
 	{
-//		synchronized ( this )
-//		{
-//			super.writeIndexToFile(output);
-//		}
 		lock.lockReadWrite();
 		try{
 			super.writeIndexToFile(output);
@@ -82,10 +74,6 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	public boolean hasWord(String word)
 	{
-//		synchronized ( this )
-//		{
-//			return super.hasWord(word);
-//		}
 		lock.lockReadOnly();
 		try{
 			return super.hasWord(word);
@@ -107,10 +95,6 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	public boolean hasPath(String word, String path)
 	{
-//		synchronized ( this )
-//		{
-//			return super.hasPath(word, path);
-//		}
 		lock.lockReadOnly();
 		try{
 			return super.hasPath(word, path);
@@ -129,10 +113,6 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	public void addAll(ArrayList<String> wordsToAdd)
 	{
-//		synchronized ( this )
-//		{
-//			super.addAll(wordsToAdd);
-//		}
 		lock.lockReadWrite();
 		try{
 			super.addAll(wordsToAdd);
@@ -150,10 +130,6 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	@Override
 	public String toString() 
 	{
-//		synchronized ( this )
-//		{
-//			return super.toString();
-//		}
 		lock.lockReadWrite();
 		try{
 			return super.toString();
@@ -175,10 +151,6 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	public List<SearchResult> partialSearch(String[] queries) throws IOException
 	{
-//		synchronized ( this )
-//		{
-//			return super.partialSearch(queries);
-//		}
 		lock.lockReadWrite();
 		try{
 			return super.partialSearch(queries);
@@ -187,21 +159,6 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 			lock.unlockReadWrite();
 		}
 	}
-	
-	
-//	@Override 
-//	public boolean add(E element)
-//	{
-//		lock.lockReadWrite();
-//		try{
-//			return super.add(E element);
-//		}
-//		finally{
-//			unlock.lockReadWrite();
-//		}
-//	}
-	
-	
 
 
 }
