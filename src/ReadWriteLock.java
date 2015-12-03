@@ -24,12 +24,12 @@ public class ReadWriteLock {
 	 */
 	public synchronized void lockReadOnly() {
 	
-		while (writers > 0)
+		while ( writers > 0 )
 		{
 			try {
 				this.wait();
 			}
-			catch (InterruptedException e)
+			catch ( InterruptedException e )
 			{
 				Thread.currentThread().interrupt();
 			}
@@ -54,23 +54,23 @@ public class ReadWriteLock {
 	 */
 	public synchronized void lockReadWrite() {
 		
-		while (writers > 0)
+		while ( writers > 0 )
 		{
 			try {
 				this.wait();
 			}
-			catch (InterruptedException e)
+			catch ( InterruptedException e )
 			{
 				Thread.currentThread().interrupt();
 			}
 		}
 		
-		while (readers > 0)
+		while ( readers > 0 )
 		{
 			try {
 				this.wait();
 			}
-			catch (InterruptedException e)
+			catch ( InterruptedException e )
 			{
 				Thread.currentThread().interrupt();
 			}

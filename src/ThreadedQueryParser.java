@@ -20,29 +20,30 @@ import org.apache.logging.log4j.Logger;
  */
 public class ThreadedQueryParser {
 
-
 	/**Initializes a LinkedHashMap to store query lines and matching
 	 * search results*/
 	private final LinkedHashMap<String, List<SearchResult>> results;
 
 	/**Initializes an inverted index*/
-	private final ThreadedInvertedIndex invertedIndex;
+	private final InvertedIndex invertedIndex;
 	
 	/** Work queue used to handle multithreading for this class. */
 	private final WorkQueue workers;
 	
 	private static final Logger logger = LogManager.getLogger();
 	private int pending;
+	ReadWriteLock lock;
 
 
 	/**Initializes a Query Parser object as well as an empty results map
 		  and an inverted index*/
-	public ThreadedQueryParser(ThreadedInvertedIndex inputInvertedIndex, int numberOfThreads)
+	public ThreadedQueryParser(InvertedIndex inputInvertedIndex, int numberOfThreads)
 	{
 		results = new LinkedHashMap<String, List<SearchResult>>();
 		invertedIndex = inputInvertedIndex;
 		workers = new WorkQueue(numberOfThreads);  
         pending = 0;
+        lock = new ReadWriteLock();
 	}
 	
 	/**
@@ -63,12 +64,12 @@ public class ThreadedQueryParser {
 	 */
 	public synchronized void finish() {
 		try {
-			while (pending > 0) {
+			while ( pending > 0 ) {
 				logger.debug("Waiting until finished");
 				this.wait();
 			}
 		}
-		catch (InterruptedException e) {
+		catch ( InterruptedException e ) {
 			logger.debug("Finish interrupted", e);
 		}
 	}
@@ -95,7 +96,7 @@ public class ThreadedQueryParser {
 		pending--;
 		logger.debug("Pending is now {}", pending);
 
-		if (pending <= 0) {
+		if ( pending <= 0 ) {
 			this.notifyAll();
 		}
 	}
@@ -123,7 +124,10 @@ public class ThreadedQueryParser {
 			//Reads in each line of file
 			while ( (line = bufferedReader.readLine()) != null ) 
 			{
-//				//iterates through lines of queries from files
+				lock.lockReadWrite();
+				results.put(line, null);
+				lock.unlockReadWrite();
+				//iterates through lines of queries from files
 				workers.execute(new QueryMinion(line));
 			}
 		}
@@ -144,10 +148,7 @@ public class ThreadedQueryParser {
 
 		String[] cleanedSplitLine = InvertedIndexBuilder.split(line);
 		partialSearch = invertedIndex.partialSearch(cleanedSplitLine);
-		synchronized( results )
-		{
-			results.put(line, partialSearch);
-		}
+		results.put(line, partialSearch);
 	}
 
 	/**
@@ -179,12 +180,10 @@ public class ThreadedQueryParser {
 	private class QueryMinion implements Runnable {
 
 		private String line;
-		private ReadWriteLock lock;
 
 		public QueryMinion(String line) {
 			logger.debug("Minion created for {}", line);
 			this.line = line;
-			lock = new ReadWriteLock();
 			incrementPending();
 		}
 
@@ -195,13 +194,13 @@ public class ThreadedQueryParser {
 					parseLine(line);
 				} catch (IOException e) {
 					e.printStackTrace();
-				} finally {
+				} 
+				finally {
 					lock.unlockReadWrite();
 				}
 				decrementPending();
-			}
-			
-		}
+		}	
+	}
 }
 	
 

@@ -4,15 +4,19 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * This class initializes a multithreaded inverted index which extends
+ * the inverted index class. 
+ */
 public class ThreadedInvertedIndex extends InvertedIndex {
 	
-	ReadWriteLock lock = new ReadWriteLock();
+	ReadWriteLock lock;
 	
 	/** Instantiates the inverted index*/
 	public ThreadedInvertedIndex()
 	{
 		super();
+		lock = new ReadWriteLock();
 	}
 	
 	/**

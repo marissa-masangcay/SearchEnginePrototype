@@ -5,13 +5,16 @@ import java.nio.file.Path;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * This class initializes a multithreaded file parser. 
+ */
 public class ThreadedIndexBuilder {
 	
 	/** Work queue used to handle multithreading for this class. */
 	private final WorkQueue workers;
-	
 	private static final Logger logger = LogManager.getLogger();
 	private int pending;
+	ReadWriteLock lock;
 	
 	
 	/**
@@ -21,6 +24,7 @@ public class ThreadedIndexBuilder {
     public ThreadedIndexBuilder(int numberOfThreads) {
         workers = new WorkQueue(numberOfThreads);  
         pending = 0;
+        lock = new ReadWriteLock();
     }
     
     /**
@@ -41,12 +45,12 @@ public class ThreadedIndexBuilder {
 	 */
 	public synchronized void finish() {
 		try {
-			while (pending > 0) {
+			while ( pending > 0 ) {
 				logger.debug("Waiting until finished");
 				this.wait();
 			}
 		}
-		catch (InterruptedException e) {
+		catch ( InterruptedException e ) {
 			logger.debug("Finish interrupted", e);
 		}
 	}
@@ -73,7 +77,7 @@ public class ThreadedIndexBuilder {
 		pending--;
 		logger.debug("Pending is now {}", pending);
 
-		if (pending <= 0) {
+		if ( pending <= 0 ) {
 			this.notifyAll();
 		}
 	}
@@ -89,24 +93,22 @@ public class ThreadedIndexBuilder {
      */
     public void traverse(Path path, InvertedIndex invertedIndex) throws IOException {
 
-        if (Files.isDirectory(path)) {
+        if ( Files.isDirectory(path) ) {
             try (
                 DirectoryStream<Path> directory = Files.newDirectoryStream(path);
             ) {
-                for (Path current : directory) {
+                for ( Path current : directory ) {
                     traverse(current, invertedIndex);
                 }
             }
-            catch (IOException e) {
+            catch ( IOException e ) {
                 System.err.println(e.getMessage());
             }
         }
-        else if (Files.isReadable(path) && path.toString().toLowerCase().endsWith(".txt")) {
+        else if ( Files.isReadable(path) && path.toString().toLowerCase().endsWith(".txt") ) {
             workers.execute(new FileMinion(path, invertedIndex));
         }
-
-    }
-    
+    }  
     
     /**
 	 * Handles per-directory parsing. If a subdirectory is encountered, a new
@@ -126,16 +128,18 @@ public class ThreadedIndexBuilder {
 
 		@Override
 		public void run() {
-			synchronized(invertedIndex){
+			lock.lockReadWrite();{
 				try {
 					InvertedIndexBuilder.parseFile(file.toString(), invertedIndex);
-				} catch (IOException e) {
+				} catch ( IOException e ) {
 					e.printStackTrace();
+				}
+				finally{
+					lock.unlockReadWrite();
 				}
 			}
 			decrementPending();
 		}
-
 	}
 
 }

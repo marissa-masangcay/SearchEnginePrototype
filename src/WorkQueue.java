@@ -92,13 +92,13 @@ public class WorkQueue {
 		public void run() {
 			Runnable r = null;
 
-			while (true) {
+			while ( true ) {
 				synchronized (queue) {
-					while (queue.isEmpty() && !shutdown) {
+					while ( queue.isEmpty() && !shutdown ) {
 						try {
 							queue.wait();
 						}
-						catch (InterruptedException ex) {
+						catch ( InterruptedException ex ) {
 							System.err.println("Warning: Work queue interrupted " +
 									"while waiting.");
 							Thread.currentThread().interrupt();
@@ -119,7 +119,7 @@ public class WorkQueue {
 				try {
 					r.run();
 				}
-				catch (RuntimeException ex) {
+				catch ( RuntimeException ex ) {
 				    // catch runtime exceptions to avoid leaking threads
 					System.err.println("Warning: Work queue encountered an " +
 							"exception while running.");
