@@ -14,7 +14,7 @@ public class ThreadedIndexBuilder {
 	private final WorkQueue workers;
 	private static final Logger logger = LogManager.getLogger();
 	private int pending;
-	ReadWriteLock lock;
+	ReadWriteLock lock; // TODO Keywords! Actually, remove this
 	
 	
 	/**
@@ -91,7 +91,8 @@ public class ThreadedIndexBuilder {
      * @param regex  regular expression to match words against
      * @see TextFileWordMatcher#countWords(Path, String)
      */
-    public void traverse(Path path, InvertedIndex invertedIndex) throws IOException {
+    public void traverse(Path path, InvertedIndex invertedIndex) throws IOException { 
+    	// TODO Make this work with a thread-safe inverted index
 
         if ( Files.isDirectory(path) ) {
             try (
@@ -128,16 +129,25 @@ public class ThreadedIndexBuilder {
 
 		@Override
 		public void run() {
+			// TODO Take away locks
 			lock.lockReadWrite();{
 				try {
 					InvertedIndexBuilder.parseFile(file.toString(), invertedIndex);
 				} catch ( IOException e ) {
+					// TODO stack trace
 					e.printStackTrace();
 				}
 				finally{
 					lock.unlockReadWrite();
 				}
 			}
+			
+			// TODO For efficiency....
+			// InvertedIndex local = new InvertedIndex();
+			// InvertedIndexBuilder.parseFile(file.toString(), local);
+			// invertedIndex.addAll(local);
+			
+			
 			decrementPending();
 		}
 	}
