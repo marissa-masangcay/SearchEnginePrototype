@@ -19,6 +19,9 @@ public class WorkQueue {
 	/** The default number of threads to use when not specified. */
 	public static final int DEFAULT = 5;
 
+	// TODO add private pending member, private increment/decrement methods, public finish method
+	// TODO Make sure your methods use synchronized (queue)
+
 	/**
 	 * Starts a work queue with the default number of threads.
 	 * @see #WorkQueue(int)
@@ -55,6 +58,8 @@ public class WorkQueue {
 		synchronized (queue) {
 			queue.addLast(r);
 			queue.notifyAll();
+			
+			// TODO increment pending here
 		}
 	}
 
@@ -124,6 +129,7 @@ public class WorkQueue {
 					System.err.println("Warning: Work queue encountered an " +
 							"exception while running.");
 				}
+				// TODO finally, decrement pending
 			}
 		}
 	}
