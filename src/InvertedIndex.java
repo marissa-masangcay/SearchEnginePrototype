@@ -7,9 +7,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -222,5 +224,32 @@ public class InvertedIndex {
 		}
 	}
 	*/
+	
+	public void addAll(InvertedIndex other) {
+		for ( String word : other.index.keySet() ) 
+		{
+			if (this.index.containsKey(word) == false) {
+				this.index.put(word, other.index.get(word));
+			}
+			else {
+//				now word exists in both places
+//				loop through other's word's paths
+				for ( String path: other.index.get(word).keySet())
+				{
+					if ( this.index.get(word).containsKey(path) == false )
+					{
+						this.index.get(word).put(path, other.index.get(word).get(path));
+					}
+					else
+					{
+						this.index.get(word).entrySet().addAll((Collection<? extends Entry<String, TreeSet<Integer>>>) other.index.get(word).entrySet());
+					}
+				}
+//					if the path exists... add all combines sets
+//					else path does not exist... do another put
+			}		
+		}
+	}
+	
 }
 

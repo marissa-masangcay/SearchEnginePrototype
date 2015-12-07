@@ -43,31 +43,31 @@ In your multithreaded version...
  * It also stores a private map that stores the given queries matched with the
  * appropriate search result objects.
  */
-public class ThreadedQueryParser {
+public class ThreadedQueryParser extends AbstractQueryParser {
 
 	/**Initializes a LinkedHashMap to store query lines and matching
 	 * search results*/
 	private final LinkedHashMap<String, List<SearchResult>> results;
 
 	/**Initializes an inverted index*/
-	private final InvertedIndex invertedIndex; // TODO Say this is thread-safe
+	private final ThreadedInvertedIndex invertedIndex; 
 	
 	/** Work queue used to handle multithreading for this class. */
 	private final WorkQueue workers;
 	
 	private static final Logger logger = LogManager.getLogger();
 	private int pending;
-	ReadWriteLock lock; // TODO Proper keywords
+	private final ReadWriteLock lock; 
 
 
 	/**Initializes a Query Parser object as well as an empty results map
 		  and an inverted index*/
-	public ThreadedQueryParser(InvertedIndex inputInvertedIndex, int numberOfThreads)
+	public ThreadedQueryParser(ThreadedInvertedIndex inputInvertedIndex, int numberOfThreads)
 	{
 		results = new LinkedHashMap<String, List<SearchResult>>();
 		invertedIndex = inputInvertedIndex;
 		workers = new WorkQueue(numberOfThreads);  
-        pending = 0; // TODO Fix indentation
+        pending = 0; 
         lock = new ReadWriteLock();
 	}
 	
@@ -125,38 +125,7 @@ public class ThreadedQueryParser {
 			this.notifyAll();
 		}
 	}
-
-
-	/**
-	 * Reads in a file to parse words/lines and add them to the lines list
-	 * and adds them to the results map with the appropriate search result
-	 * objects mapped to them. 
-	 *
-	 * @param path
-	 *            file to read in for queries
-	 * @param outputPath
-	 *            file to write search result objects to
-	 * @return 
-	 */
-	public void parseFile(String path) throws IOException
-	{			
-		Path inputPath = Paths.get(path);
-
-		try (BufferedReader bufferedReader = Files.newBufferedReader(inputPath, StandardCharsets.UTF_8))
-		{
-			String line;
-
-			//Reads in each line of file
-			while ( (line = bufferedReader.readLine()) != null ) 
-			{
-				lock.lockReadWrite();
-				results.put(line, null);
-				lock.unlockReadWrite();
-				//iterates through lines of queries from files
-				workers.execute(new QueryMinion(line));
-			}
-		}
-	} 
+ 
 
 	/**
 	 * Reads in a line and adds them to the results map with 
@@ -167,14 +136,16 @@ public class ThreadedQueryParser {
 	 * @throws IOException
 	 * @return 
 	 */
+	
+
+	@Override
 	public void parseLine(String line) throws IOException
 	{
-		// TODO Not multithreaded, one worker per line... and not safe access
-		List<SearchResult> partialSearch;
-
-		String[] cleanedSplitLine = InvertedIndexBuilder.split(line);
-		partialSearch = invertedIndex.partialSearch(cleanedSplitLine);
-		results.put(line, partialSearch);
+		lock.lockReadWrite();
+		results.put(line, null);
+		lock.unlockReadWrite();
+		//iterates through lines of queries from files
+		workers.execute(new QueryMinion(line));
 	}
 
 	/**
@@ -187,13 +158,16 @@ public class ThreadedQueryParser {
 	 * @throws IOException
 	 * @return 
 	 */ 
+	@Override
 	public void writeToFile(String outputPath) throws IOException 
 	{
 		try (	
 				BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(outputPath) , StandardCharsets.UTF_8);
 				)
 		{
+			lock.lockReadWrite();;
 			JSONWriter.resultsToJSON(bufferedWriter, results);
+			lock.unlockReadWrite(); 
 		}
 
 	}
@@ -217,7 +191,12 @@ public class ThreadedQueryParser {
 		public void run() {
 			lock.lockReadWrite();
 				try {
-					parseLine(line);
+					List<SearchResult> partialSearch;
+
+					String[] cleanedSplitLine = InvertedIndexBuilder.split(line);
+					partialSearch = invertedIndex.partialSearch(cleanedSplitLine);
+					results.put(line, partialSearch);
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				} 

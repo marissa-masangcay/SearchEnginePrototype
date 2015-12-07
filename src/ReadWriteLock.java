@@ -45,7 +45,10 @@ public class ReadWriteLock {
 		
 		assert readers > 0;
 		readers--;
-		this.notifyAll(); // TODO Only call when readers is 0
+		if ( readers == 0 )
+		{
+			this.notifyAll();
+		}
 	}
 
 	/**
@@ -53,19 +56,7 @@ public class ReadWriteLock {
 	 * then will increase the number of active writers.
 	 */
 	public synchronized void lockReadWrite() {
-		// TODO Combine these into a single while loop writers > 0 || readers > 0
-		while ( writers > 0 )
-		{
-			try {
-				this.wait();
-			}
-			catch ( InterruptedException e )
-			{
-				Thread.currentThread().interrupt();
-			}
-		}
-		
-		while ( readers > 0 )
+		while ( writers > 0 || readers > 0 )
 		{
 			try {
 				this.wait();

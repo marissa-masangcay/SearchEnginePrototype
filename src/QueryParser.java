@@ -15,7 +15,7 @@ import java.util.List;
  * It also stores a private map that stores the given queries matched with the
  * appropriate search result objects.
  */
-public class QueryParser {
+public class QueryParser extends AbstractQueryParser {
 	
 	/**Initializes a LinkedHashMap to store query lines and matching
 	 * search results*/
@@ -33,34 +33,6 @@ public class QueryParser {
 		invertedIndex = inputInvertedIndex;
 	}
 	
-	
-	/**
-	 * Reads in a file to parse words/lines and add them to the lines list
-	 * and adds them to the results map with the appropriate search result
-	 * objects mapped to them. 
-	 *
-	 * @param path
-	 *            file to read in for queries
-	 * @param outputPath
-	 *            file to write search result objects to
-	 * @return 
-	 */
-	public void parseFile(String path) throws IOException
-	{			
-		Path inputPath = Paths.get(path);
-		
-		try (BufferedReader bufferedReader = Files.newBufferedReader(inputPath, StandardCharsets.UTF_8))
-		{
-			String line;
-			
-			//Reads in each line of file
-			while ( (line = bufferedReader.readLine()) != null ) 
-			{
-				//iterates through lines of queries from files
-				parseLine(line);
-			}
-		}
-	} 
 	
 	/**
 	 * Reads in a line and adds them to the results map with 

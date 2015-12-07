@@ -14,7 +14,6 @@ public class ThreadedIndexBuilder {
 	private final WorkQueue workers;
 	private static final Logger logger = LogManager.getLogger();
 	private int pending;
-	ReadWriteLock lock; // TODO Keywords! Actually, remove this
 	
 	
 	/**
@@ -24,7 +23,6 @@ public class ThreadedIndexBuilder {
     public ThreadedIndexBuilder(int numberOfThreads) {
         workers = new WorkQueue(numberOfThreads);  
         pending = 0;
-        lock = new ReadWriteLock();
     }
     
     /**
@@ -91,8 +89,7 @@ public class ThreadedIndexBuilder {
      * @param regex  regular expression to match words against
      * @see TextFileWordMatcher#countWords(Path, String)
      */
-    public void traverse(Path path, InvertedIndex invertedIndex) throws IOException { 
-    	// TODO Make this work with a thread-safe inverted index
+    public void traverse(Path path, ThreadedInvertedIndex invertedIndex) throws IOException { 
 
         if ( Files.isDirectory(path) ) {
             try (
@@ -120,7 +117,7 @@ public class ThreadedIndexBuilder {
 		private Path file;
 		private InvertedIndex invertedIndex;
 
-		public FileMinion(Path file, InvertedIndex invertedIndex) {
+		public FileMinion(Path file, ThreadedInvertedIndex invertedIndex) {
 			logger.debug("Minion created for {}", file);
 			this.file = file;
 			this.invertedIndex = invertedIndex;
@@ -129,17 +126,15 @@ public class ThreadedIndexBuilder {
 
 		@Override
 		public void run() {
-			// TODO Take away locks
-			lock.lockReadWrite();{
 				try {
-					InvertedIndexBuilder.parseFile(file.toString(), invertedIndex);
+					//InvertedIndexBuilder.parseFile(file.toString(), invertedIndex);
+					InvertedIndex local = new InvertedIndex();
+					InvertedIndexBuilder.parseFile(file.toString(), local);
+					invertedIndex.addAll(local);
 				} catch ( IOException e ) {
-					// TODO stack trace
 					e.printStackTrace();
 				}
-				finally{
-					lock.unlockReadWrite();
-				}
+				decrementPending();
 			}
 			
 			// TODO For efficiency....
@@ -147,9 +142,7 @@ public class ThreadedIndexBuilder {
 			// InvertedIndexBuilder.parseFile(file.toString(), local);
 			// invertedIndex.addAll(local);
 			
-			
-			decrementPending();
 		}
-	}
+
 
 }
