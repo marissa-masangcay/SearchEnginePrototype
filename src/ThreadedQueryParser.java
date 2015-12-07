@@ -1,4 +1,3 @@
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -7,34 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-/*
-TODO
-
-Create an AbstractQueryParser class with:
-	non-abstract implemented parseFile method
-	abstract parseLine method
-	abstract writeToFile method
-
-Extend this in both classes...
-
-In your multithreaded version...
-	Do not touch parseFile
-	
-	override writeToFile with proper locks
-	
-	override parseLine...
-		lock.lockReadWrite();
-		results.put(line, null);
-		lock.unlockReadWrite();
-		//iterates through lines of queries from files
-		workers.execute(new QueryMinion(line));
-
-	what parseLine is doing now, move into the run() method.
-*/
 
 
 /**
@@ -165,7 +138,7 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 				BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(outputPath) , StandardCharsets.UTF_8);
 				)
 		{
-			lock.lockReadWrite();;
+			lock.lockReadWrite();
 			JSONWriter.resultsToJSON(bufferedWriter, results);
 			lock.unlockReadWrite(); 
 		}
@@ -189,7 +162,7 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 
 		@Override
 		public void run() {
-			lock.lockReadWrite();
+			lock.lockReadOnly();;
 				try {
 					List<SearchResult> partialSearch;
 
@@ -201,7 +174,7 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 					e.printStackTrace();
 				} 
 				finally {
-					lock.unlockReadWrite();
+					lock.unlockReadOnly();
 				}
 				decrementPending();
 		}	

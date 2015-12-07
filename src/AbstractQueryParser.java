@@ -5,6 +5,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * This class has a parse file method that is used by both
+ * the QueryParser and ThreadedQueryParser classes to avoid
+ * code duplication. It also has the parseLine and writeToFile
+ * methods to be extended by the two classes.
+ */
 public abstract class AbstractQueryParser {
 
 	/**

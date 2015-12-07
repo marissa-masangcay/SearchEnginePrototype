@@ -205,36 +205,23 @@ public class InvertedIndex {
 		return searchResults;
 	}
 	
-	// TODO For efficency, add this method...
-	/*
-	public void addAll(InvertedIndex other) {
-		for (String word : other.index.keySet()) {
-			
-			if (this.index.containsKey(word) == false) {
-				this.index.put(word, other.index.get(word));
-			}
-			else {
-				now word exists in both places
-				loop through other's word's paths
-					if the path exists... add all combines sets
-					else path does not exist... do another put
-			}
-			
-			
-		}
-	}
-	*/
-	
+	/**
+	 * Adds all words from the given inverted index into
+	 * this inveted index if they do not already exist and
+	 * then combines the two inverted indexes 
+	 * 
+	 * @param other
+	 *            inverted index to add entries from
+	 * @return List of search result objects that start with given queries
+	 */
 	public void addAll(InvertedIndex other) {
 		for ( String word : other.index.keySet() ) 
 		{
-			if (this.index.containsKey(word) == false) {
+			if ( this.index.containsKey(word) == false ) {
 				this.index.put(word, other.index.get(word));
 			}
 			else {
-//				now word exists in both places
-//				loop through other's word's paths
-				for ( String path: other.index.get(word).keySet())
+				for ( String path: other.index.get(word).keySet() )
 				{
 					if ( this.index.get(word).containsKey(path) == false )
 					{
@@ -245,8 +232,6 @@ public class InvertedIndex {
 						this.index.get(word).entrySet().addAll((Collection<? extends Entry<String, TreeSet<Integer>>>) other.index.get(word).entrySet());
 					}
 				}
-//					if the path exists... add all combines sets
-//					else path does not exist... do another put
 			}		
 		}
 	}

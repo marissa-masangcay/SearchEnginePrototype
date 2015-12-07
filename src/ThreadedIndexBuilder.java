@@ -116,33 +116,29 @@ public class ThreadedIndexBuilder {
 
 		private Path file;
 		private InvertedIndex invertedIndex;
+		private final ReadWriteLock lock;
 
 		public FileMinion(Path file, ThreadedInvertedIndex invertedIndex) {
 			logger.debug("Minion created for {}", file);
 			this.file = file;
 			this.invertedIndex = invertedIndex;
+			this.lock = new ReadWriteLock();
 			incrementPending();
 		}
 
 		@Override
 		public void run() {
 				try {
-					//InvertedIndexBuilder.parseFile(file.toString(), invertedIndex);
-					InvertedIndex local = new InvertedIndex();
+					ThreadedInvertedIndex local = new ThreadedInvertedIndex();
+					lock.lockReadOnly();
 					InvertedIndexBuilder.parseFile(file.toString(), local);
 					invertedIndex.addAll(local);
+					lock.unlockReadOnly();
 				} catch ( IOException e ) {
 					e.printStackTrace();
 				}
 				decrementPending();
 			}
-			
-			// TODO For efficiency....
-			// InvertedIndex local = new InvertedIndex();
-			// InvertedIndexBuilder.parseFile(file.toString(), local);
-			// invertedIndex.addAll(local);
-			
 		}
-
 
 }

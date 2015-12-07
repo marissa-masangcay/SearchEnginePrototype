@@ -1,9 +1,7 @@
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -64,7 +62,6 @@ public class QueryParser extends AbstractQueryParser {
 	 */ 
 	public void writeToFile(String outputPath) throws IOException 
 	{
-		
 		try (	
 				BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(outputPath) , StandardCharsets.UTF_8);
 				)

@@ -255,8 +255,7 @@ public class Driver {
             	{
             		threadedQueryParser.writeToFile(resultsFile.toString());
             	}
-            }
-          
+            }         
             
 
         } catch ( NullPointerException e ) { 

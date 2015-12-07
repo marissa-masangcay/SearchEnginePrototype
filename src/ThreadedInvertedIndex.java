@@ -163,6 +163,16 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 			lock.unlockReadOnly();
 		}
 	}
+	
+	public void addAll(InvertedIndex other) {
+		lock.lockReadWrite();
+		try{
+			super.addAll(other);
+		}
+		finally{
+			lock.unlockReadWrite();
+		}
+	}
 
 
 }
