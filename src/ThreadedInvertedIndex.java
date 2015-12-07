@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class ThreadedInvertedIndex extends InvertedIndex {
 	
-	ReadWriteLock lock;
+	ReadWriteLock lock; // TODO Use proper keywords
 	
 	/** Instantiates the inverted index*/
 	public ThreadedInvertedIndex()
@@ -59,7 +59,7 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	public void writeIndexToFile(String output) throws UnsupportedEncodingException, FileNotFoundException, IOException
 	{
-		lock.lockReadWrite();
+		lock.lockReadWrite(); // TODO Lock for read only
 		try{
 			super.writeIndexToFile(output);
 		}
@@ -134,7 +134,7 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	@Override
 	public String toString() 
 	{
-		lock.lockReadWrite();
+		lock.lockReadWrite(); // TODO Read only
 		try{
 			return super.toString();
 		}
@@ -155,7 +155,7 @@ public class ThreadedInvertedIndex extends InvertedIndex {
 	 */
 	public List<SearchResult> partialSearch(String[] queries) throws IOException
 	{
-		lock.lockReadWrite();
+		lock.lockReadWrite(); // TODO Lock read, will help efficiency
 		try{
 			return super.partialSearch(queries);
 		}

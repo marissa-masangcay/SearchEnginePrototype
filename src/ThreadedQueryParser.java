@@ -11,6 +11,31 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/*
+TODO
+
+Create an AbstractQueryParser class with:
+	non-abstract implemented parseFile method
+	abstract parseLine method
+	abstract writeToFile method
+
+Extend this in both classes...
+
+In your multithreaded version...
+	Do not touch parseFile
+	
+	override writeToFile with proper locks
+	
+	override parseLine...
+		lock.lockReadWrite();
+		results.put(line, null);
+		lock.unlockReadWrite();
+		//iterates through lines of queries from files
+		workers.execute(new QueryMinion(line));
+
+	what parseLine is doing now, move into the run() method.
+*/
+
 
 /**
  * This class instantiates a private LinkedHashMap that will store the provided queries
@@ -25,14 +50,14 @@ public class ThreadedQueryParser {
 	private final LinkedHashMap<String, List<SearchResult>> results;
 
 	/**Initializes an inverted index*/
-	private final InvertedIndex invertedIndex;
+	private final InvertedIndex invertedIndex; // TODO Say this is thread-safe
 	
 	/** Work queue used to handle multithreading for this class. */
 	private final WorkQueue workers;
 	
 	private static final Logger logger = LogManager.getLogger();
 	private int pending;
-	ReadWriteLock lock;
+	ReadWriteLock lock; // TODO Proper keywords
 
 
 	/**Initializes a Query Parser object as well as an empty results map
@@ -42,7 +67,7 @@ public class ThreadedQueryParser {
 		results = new LinkedHashMap<String, List<SearchResult>>();
 		invertedIndex = inputInvertedIndex;
 		workers = new WorkQueue(numberOfThreads);  
-        pending = 0;
+        pending = 0; // TODO Fix indentation
         lock = new ReadWriteLock();
 	}
 	
@@ -144,6 +169,7 @@ public class ThreadedQueryParser {
 	 */
 	public void parseLine(String line) throws IOException
 	{
+		// TODO Not multithreaded, one worker per line... and not safe access
 		List<SearchResult> partialSearch;
 
 		String[] cleanedSplitLine = InvertedIndexBuilder.split(line);

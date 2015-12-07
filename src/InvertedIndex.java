@@ -203,5 +203,24 @@ public class InvertedIndex {
 		return searchResults;
 	}
 	
+	// TODO For efficency, add this method...
+	/*
+	public void addAll(InvertedIndex other) {
+		for (String word : other.index.keySet()) {
+			
+			if (this.index.containsKey(word) == false) {
+				this.index.put(word, other.index.get(word));
+			}
+			else {
+				now word exists in both places
+				loop through other's word's paths
+					if the path exists... add all combines sets
+					else path does not exist... do another put
+			}
+			
+			
+		}
+	}
+	*/
 }
 
