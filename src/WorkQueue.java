@@ -1,5 +1,7 @@
 import java.util.LinkedList;
 
+// TODO Don't forget this class!
+
 /**
  * A simple work queue implementation. 
  * It is up to the user of this class to keep track of whether
