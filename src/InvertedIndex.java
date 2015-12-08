@@ -229,6 +229,10 @@ public class InvertedIndex {
 					}
 					else
 					{
+						// TODO In this case, there is already a treeset of integers in this.index. 
+						// TODO Need to combine that with the treeset of integers in other.index.
+						// TODO This instead: this.index.get(word).get(path).addAll(other.index.get(word).get(path));
+						
 						this.index.get(word).entrySet().addAll((Collection<? extends Entry<String, TreeSet<Integer>>>) other.index.get(word).entrySet());
 					}
 				}
