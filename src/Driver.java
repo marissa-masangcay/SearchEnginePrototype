@@ -107,8 +107,12 @@ public class Driver {
     public static void main(String[] args) throws IOException {
         
         ArgumentParser argumentParser = new ArgumentParser(args);
+        
+        // TODO Only need these for single-threading, maybe calling new and then not using them
         InvertedIndex invertedIndex = new InvertedIndex();
         QueryParser queryParser = new QueryParser(invertedIndex);
+        
+        // TODO Only need these if multithreading, so create later
         ThreadedInvertedIndex threadedInvertedIndex = null;
         ThreadedIndexBuilder threadedIndexBuilder = null;
         ThreadedQueryParser threadedQueryParser = null;
@@ -143,6 +147,8 @@ public class Driver {
         		 }
         		
         		threadedInvertedIndex = new ThreadedInvertedIndex();
+        		
+        		// TODO These work queues are running forever
                 threadedIndexBuilder = new ThreadedIndexBuilder(numberOfThreads);
                 threadedQueryParser = new ThreadedQueryParser(threadedInvertedIndex, numberOfThreads);
         	}
@@ -262,4 +268,57 @@ public class Driver {
         	System.err.println("No input found");
         } 
     }
+    
+    /* TODO Should help you pass the benchmark
+    public void main(String [] args) {
+        InvertedIndex index = null;
+        AbstractQueryParser parser = null;
+        
+        if (multithreading) {
+            ThreadedInvertedIndex threaded = new ThreadedInvertedIndex();
+            index = threaded;
+            
+            threadedIndexBuilder = new ThreadedIndexBuilder(numberOfThreads);
+            threadedQueryParser = new ThreadedQueryParser(threadedInvertedIndex, numberOfThreads);
+            
+            if (build) {
+                multithreaded build
+                finish
+            }
+            
+            if (search) {
+                multithreaded search
+                finish
+            }
+
+            threadedIndexBuilder.shutdown();
+            threadedQueryParser.shutdown();
+        }
+        else {
+            index = new InvertedIndex();
+            parser = new QueryParser();
+            
+            if (build) {
+                single-threaded build
+            }
+            
+            if (search) {
+                single-threaded seach
+            }
+        }
+        
+        
+        if (printing index) {
+            index.writeIndexToFile(...)
+        }
+        
+        if (printing search results) {
+            parser.writeToFile(...)
+        }
+    }
+    */    
+    
+    
+    
+    
 }
