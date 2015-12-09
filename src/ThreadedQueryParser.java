@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+// TODO Re-indent everything because this is a mix of tabs spaces
 
 /**
  * This class instantiates a private LinkedHashMap that will store the provided queries
@@ -40,8 +41,8 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 		results = new LinkedHashMap<String, List<SearchResult>>();
 		invertedIndex = inputInvertedIndex;
 		workers = new WorkQueue(numberOfThreads);  
-        pending = 0; 
-        lock = new ReadWriteLock();
+		pending = 0; 
+		lock = new ReadWriteLock();
 	}
 	
 	/**
@@ -138,6 +139,7 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 				BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(outputPath) , StandardCharsets.UTF_8);
 				)
 		{
+			// TODO Only need to lock for read, because reading from the shared data
 			lock.lockReadWrite();
 			JSONWriter.resultsToJSON(bufferedWriter, results);
 			lock.unlockReadWrite(); 
@@ -162,15 +164,18 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 
 		@Override
 		public void run() {
-			lock.lockReadOnly();;
+			lock.lockReadOnly();; // TODO Remove this from here
 				try {
 					List<SearchResult> partialSearch;
 
 					String[] cleanedSplitLine = InvertedIndexBuilder.split(line);
 					partialSearch = invertedIndex.partialSearch(cleanedSplitLine);
+					
+					// TODO Protect this put by a lock for writing.
 					results.put(line, partialSearch);
 					
 				} catch (IOException e) {
+					// TODO No stack trace
 					e.printStackTrace();
 				} 
 				finally {

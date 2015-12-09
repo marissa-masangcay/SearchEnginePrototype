@@ -13,7 +13,7 @@ public class ThreadedIndexBuilder {
 	/** Work queue used to handle multithreading for this class. */
 	private final WorkQueue workers;
 	private static final Logger logger = LogManager.getLogger();
-	private int pending;
+	private int pending; // TODO Move pending into work queue
 	
 	
 	/**
@@ -129,12 +129,14 @@ public class ThreadedIndexBuilder {
 		@Override
 		public void run() {
 				try {
+					// TODO Make this InvertedIndex local = new InvertedIndex();
 					ThreadedInvertedIndex local = new ThreadedInvertedIndex();
-					lock.lockReadOnly();
+					lock.lockReadOnly(); // TODO Remove locks
 					InvertedIndexBuilder.parseFile(file.toString(), local);
 					invertedIndex.addAll(local);
 					lock.unlockReadOnly();
 				} catch ( IOException e ) {
+					// TODO No stack trace
 					e.printStackTrace();
 				}
 				decrementPending();
