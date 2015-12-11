@@ -7,11 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -228,12 +226,8 @@ public class InvertedIndex {
 						this.index.get(word).put(path, other.index.get(word).get(path));
 					}
 					else
-					{
-						// TODO In this case, there is already a treeset of integers in this.index. 
-						// TODO Need to combine that with the treeset of integers in other.index.
-						// TODO This instead: this.index.get(word).get(path).addAll(other.index.get(word).get(path));
-						
-						this.index.get(word).entrySet().addAll((Collection<? extends Entry<String, TreeSet<Integer>>>) other.index.get(word).entrySet());
+					{						
+						this.index.get(word).get(path).addAll( other.index.get(word).get(path));
 					}
 				}
 			}		

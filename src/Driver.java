@@ -108,8 +108,8 @@ public class Driver {
         
         ArgumentParser argumentParser = new ArgumentParser(args);
         
-        InvertedIndex invertedIndex = null;
-        AbstractQueryParser queryParser = null;
+        InvertedIndex invertedIndex;
+        AbstractQueryParser queryParser;
         
         ThreadedInvertedIndex threadedInvertedIndex;
         ThreadedIndexBuilder threadedIndexBuilder;
@@ -215,11 +215,8 @@ public class Driver {
         				{
         					System.err.println("Invalid directory");
         				}
-        				else
-        				{
-        					//Traverses through the directory given by user
-        					InvertedIndexBuilder.traverse(directory, invertedIndex);
-        				}
+        				//Traverses through the directory given by user
+        				InvertedIndexBuilder.traverse(directory, invertedIndex);
         			}
         			else //if input flag has no value
         			{

@@ -26,8 +26,6 @@ public class WorkQueue {
 	private static final Logger logger = LogManager.getLogger();
 	private int pending;
 
-	// TODO add private pending member, private increment/decrement methods, public finish method
-	// TODO Make sure your methods use synchronized (queue)
 
 	/**
 	 * Starts a work queue with the default number of threads.
@@ -62,12 +60,12 @@ public class WorkQueue {
 	 * @param r work request (in the form of a {@link Runnable} object)
 	 */
 	public void execute(Runnable r) {
-		synchronized (queue) {
+		synchronized (queue) 
+		{
 			queue.addLast(r);
 			queue.notifyAll();
 			
 			incrementPending();
-			// TODO increment pending here
 		}
 	}
 
@@ -76,11 +74,11 @@ public class WorkQueue {
 	 * but threads in-progress will not be interrupted.
 	 */
 	public void shutdown() {
-	    // safe to do unsynchronized due to volatile keyword
 		finish();
 		shutdown = true;
 
-		synchronized (queue) {
+		synchronized (queue) 
+		{
 			queue.notifyAll();
 		}
 	}
@@ -163,7 +161,8 @@ public class WorkQueue {
 			Runnable r = null;
 
 			while ( true ) {
-				synchronized (queue) {
+				synchronized (queue)
+				{
 					while ( queue.isEmpty() && !shutdown ) {
 						try {
 							queue.wait();
@@ -174,9 +173,6 @@ public class WorkQueue {
 							Thread.currentThread().interrupt();
 						}
 					}
-
-					// exit while for one of two reasons:
-					// (a) queue has work, or (b) shutdown has been called
 
 					if (shutdown) {
 						break;
@@ -197,7 +193,6 @@ public class WorkQueue {
 				finally{
 					decrementPending();
 				}
-				// TODO finally, decrement pending
 			}
 		}
 	}
