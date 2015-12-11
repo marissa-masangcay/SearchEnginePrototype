@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// TODO Re-indent everything because this is a mix of tabs spaces
 
 /**
  * This class instantiates a private LinkedHashMap that will store the provided queries
@@ -25,12 +24,11 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 
 	/**Initializes an inverted index*/
 	private final ThreadedInvertedIndex invertedIndex; 
-	
+
 	/** Work queue used to handle multithreading for this class. */
 	private final WorkQueue workers;
-	
+
 	private static final Logger logger = LogManager.getLogger();
-	private int pending;
 	private final ReadWriteLock lock; 
 
 
@@ -40,66 +38,31 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 	{
 		results = new LinkedHashMap<String, List<SearchResult>>();
 		invertedIndex = inputInvertedIndex;
-		workers = new WorkQueue(numberOfThreads);  
-		pending = 0; 
+		workers = new WorkQueue(numberOfThreads);   
 		lock = new ReadWriteLock();
 	}
 	
-	/**
-     * Shutsdown the work queue after all pending work is finished. After this
-     * point, all additional calls to {@link #parseTextFiles(Path, String)} will
-     * no longer work.
-     */
-    public synchronized void shutdown() {
-        logger.debug("Shutting down");
-        finish();
-        workers.shutdown();
-    }
-    
+	
     /**
 	 * Helper method, that helps a thread wait until all of the current
 	 * work is done. This is useful for resetting the counters or shutting
 	 * down the work queue.
 	 */
 	public synchronized void finish() {
-		try {
-			while ( pending > 0 ) {
-				logger.debug("Waiting until finished");
-				this.wait();
-			}
-		}
-		catch ( InterruptedException e ) {
-			logger.debug("Finish interrupted", e);
-		}
+		logger.debug("Finishing");
+		workers.finish();
 	}
-	
-	/**
-	 * Indicates that we now have additional "pending" work to wait for. We
-	 * need this since we can no longer call join() on the threads. (The
-	 * threads keep running forever in the background.)
-	 *
-	 * We made this a synchronized method in the outer class, since locking
-	 * on the "this" object within an inner class does not work.
-	 */
-	private synchronized void incrementPending() {
-		pending++;
-		logger.debug("Pending is now {}", pending);
-	}
-	
-	
-	/**
-	 * Indicates that we now have one less "pending" work, and will notify
-	 * any waiting threads if we no longer have any more pending work left.
-	 */
-	private synchronized void decrementPending() {
-		pending--;
-		logger.debug("Pending is now {}", pending);
 
-		if ( pending <= 0 ) {
-			this.notifyAll();
-		}
+	/**
+	 * Shuts down the work queue after all pending work is finished. After this
+	 * point, all additional calls to {@link #parseTextFiles(Path, String)} will
+	 * no longer work.
+	 */
+	public synchronized void shutdown() {
+		logger.debug("Shutting down");
+		workers.shutdown();
 	}
- 
+
 
 	/**
 	 * Reads in a line and adds them to the results map with 
@@ -110,8 +73,6 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 	 * @throws IOException
 	 * @return 
 	 */
-	
-
 	@Override
 	public void parseLine(String line) throws IOException
 	{
@@ -139,15 +100,14 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 				BufferedWriter bufferedWriter = Files.newBufferedWriter(Paths.get(outputPath) , StandardCharsets.UTF_8);
 				)
 		{
-			// TODO Only need to lock for read, because reading from the shared data
-			lock.lockReadWrite();
+			lock.lockReadOnly();
 			JSONWriter.resultsToJSON(bufferedWriter, results);
-			lock.unlockReadWrite(); 
+			lock.unlockReadOnly();
 		}
 
 	}
-	
-	
+
+
 	/**
 	 * Handles per-directory parsing. If a subdirectory is encountered, a new
 	 * {@link DirectoryMinion} is created to handle that subdirectory.
@@ -159,33 +119,27 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 		public QueryMinion(String line) {
 			logger.debug("Minion created for {}", line);
 			this.line = line;
-			incrementPending();
 		}
 
 		@Override
 		public void run() {
-			lock.lockReadOnly();; // TODO Remove this from here
-				try {
-					List<SearchResult> partialSearch;
+			try {
+				List<SearchResult> partialSearch;
 
-					String[] cleanedSplitLine = InvertedIndexBuilder.split(line);
-					partialSearch = invertedIndex.partialSearch(cleanedSplitLine);
-					
-					// TODO Protect this put by a lock for writing.
-					results.put(line, partialSearch);
-					
-				} catch (IOException e) {
-					// TODO No stack trace
-					e.printStackTrace();
-				} 
-				finally {
-					lock.unlockReadOnly();
-				}
-				decrementPending();
+				String[] cleanedSplitLine = InvertedIndexBuilder.split(line);
+				partialSearch = invertedIndex.partialSearch(cleanedSplitLine);
+
+				lock.lockReadWrite();
+				results.put(line, partialSearch);
+				lock.unlockReadWrite();
+
+			} catch (IOException e) {
+				System.err.println("Error in work queue at Partial Search");
+			} 
 		}	
 	}
 }
-	
+
 
 
 

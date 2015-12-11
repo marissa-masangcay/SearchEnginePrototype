@@ -108,14 +108,12 @@ public class Driver {
         
         ArgumentParser argumentParser = new ArgumentParser(args);
         
-        // TODO Only need these for single-threading, maybe calling new and then not using them
-        InvertedIndex invertedIndex = new InvertedIndex();
-        QueryParser queryParser = new QueryParser(invertedIndex);
+        InvertedIndex invertedIndex = null;
+        AbstractQueryParser queryParser = null;
         
-        // TODO Only need these if multithreading, so create later
-        ThreadedInvertedIndex threadedInvertedIndex = null;
-        ThreadedIndexBuilder threadedIndexBuilder = null;
-        ThreadedQueryParser threadedQueryParser = null;
+        ThreadedInvertedIndex threadedInvertedIndex;
+        ThreadedIndexBuilder threadedIndexBuilder;
+        ThreadedQueryParser threadedQueryParser;
                
         String directoryToTraverse = null;
         
@@ -125,14 +123,13 @@ public class Driver {
         Path queriesFile = null;
         
         int numberOfThreads = -1;
-        Boolean threaded = false;
         
         try{  
-        	
-        	 /**thread = number of threads to use*/
+
+        	/**thread = number of threads to use*/
+        	/** if multi-threaded */
         	if ( argumentParser.hasFlag(THREAD_FLAG) )
         	{
-        		threaded = true;
         		try {
         			numberOfThreads = Integer.parseInt(argumentParser.getValue(THREAD_FLAG));
         			if ( numberOfThreads == 0 )
@@ -142,183 +139,151 @@ public class Driver {
         		} catch ( NumberFormatException e ) {
         			numberOfThreads = THREAD_DEFAULT;
         		}
-        		 catch ( NullPointerException e ) {
-        			 numberOfThreads = THREAD_DEFAULT;
-        		 }
-        		
+        		catch ( NullPointerException e ) {
+        			numberOfThreads = THREAD_DEFAULT;
+        		}
+
         		threadedInvertedIndex = new ThreadedInvertedIndex();
-        		
-        		// TODO These work queues are running forever
-                threadedIndexBuilder = new ThreadedIndexBuilder(numberOfThreads);
-                threadedQueryParser = new ThreadedQueryParser(threadedInvertedIndex, numberOfThreads);
+        		invertedIndex = threadedInvertedIndex;
+        		threadedIndexBuilder = new ThreadedIndexBuilder(numberOfThreads);
+        		threadedQueryParser = new ThreadedQueryParser(threadedInvertedIndex, numberOfThreads);
+        		queryParser = threadedQueryParser;
+
+        		if ( argumentParser.hasFlag(INPUT_FLAG) )
+        		{
+        			//if input flag has a value
+        			if ( argumentParser.hasValue(INPUT_FLAG) )
+        			{
+        				directoryToTraverse = argumentParser.getValue(INPUT_FLAG);
+        				directory = Paths.get(directoryToTraverse);
+
+        				//if directory isn't a valid directory
+        				if ( !Files.isDirectory(directory) )
+        				{
+        					System.err.println("Invalid directory");
+        				}
+        				threadedIndexBuilder.traverse(directory, threadedInvertedIndex);
+        				threadedIndexBuilder.finish();
+        			}
+        			else //if input flag has no value
+        			{
+        				System.err.println("No directory entered, please enter valid directory");
+        			}
+        		}
+        		//if args has no input flag
+        		else
+        		{
+        			System.err.println("No directory found, please enter a directory");
+        		}
+
+
+        		/**query = file name to obtain queries from*/
+        		if ( argumentParser.hasFlag(QUERIES_FLAG) )
+        		{
+        			if ( argumentParser.getValue(QUERIES_FLAG) != null )
+        			{
+        				queriesFile = Paths.get(argumentParser.getValue(QUERIES_FLAG));
+        				//if queries flag is not valid
+        				if ( !Files.isReadable(queriesFile) )
+        				{
+        					System.err.println("Invalid query file");
+        				}
+        				threadedQueryParser.parseFile(queriesFile.toString());
+        				threadedQueryParser.finish();
+        			}
+        		}       
+
+        		threadedIndexBuilder.shutdown();
+        		threadedQueryParser.shutdown();
         	}
+        	else{
+
+        		invertedIndex = new InvertedIndex();
+        		queryParser = new QueryParser(invertedIndex);
+
+        		/**input = directory to traverse through*/
+        		if ( argumentParser.hasFlag(INPUT_FLAG) )
+        		{
+        			//if input flag has a value
+        			if ( argumentParser.hasValue(INPUT_FLAG) )
+        			{
+        				directoryToTraverse = argumentParser.getValue(INPUT_FLAG);
+        				directory = Paths.get(directoryToTraverse);
+
+        				//if directory isn't a valid directory
+        				if ( !Files.isDirectory(directory) )
+        				{
+        					System.err.println("Invalid directory");
+        				}
+        				else
+        				{
+        					//Traverses through the directory given by user
+        					InvertedIndexBuilder.traverse(directory, invertedIndex);
+        				}
+        			}
+        			else //if input flag has no value
+        			{
+        				System.err.println("No directory entered, please enter valid directory");
+        			}
+        		}
+        		//if args has no input flag
+        		else
+        		{
+        			System.err.println("No directory found, please enter a directory");
+        		}
+
+
+        		/**query = file name to obtain queries from*/
+        		if ( argumentParser.hasFlag(QUERIES_FLAG) )
+        		{
+        			if ( argumentParser.getValue(QUERIES_FLAG) != null )
+        			{
+        				queriesFile = Paths.get(argumentParser.getValue(QUERIES_FLAG));
+        				//if queries flag is not valid
+        				if ( !Files.isReadable(queriesFile) )
+        				{
+        					System.err.println("Invalid query file");
+        				}
+        				else
+        				{
+        					//parses files for queries
+        					queryParser.parseFile(queriesFile.toString());
+        				}
+        			}
+        		}     
+
+        	}         
         	
-            
-            
-            /**input = directory to traverse through*/
-            if ( argumentParser.hasFlag(INPUT_FLAG) )
-            {
-            	//if input flag has a value
-            	if ( argumentParser.hasValue(INPUT_FLAG) )
-            	{
-            		directoryToTraverse = argumentParser.getValue(INPUT_FLAG);
-            		directory = Paths.get(directoryToTraverse);
-            		
-            		//if directory isn't a valid directory
-            		if ( !Files.isDirectory(directory) )
-            		{
-            			System.err.println("Invalid directory");
-            		}
-            		else
-            		{
-            			if ( !threaded )
-            			{
-            				//Traverses through the directory given by user
-                       		InvertedIndexBuilder.traverse(directory, invertedIndex);
-            			}
-            			else if ( threaded )
-            			{
-            				threadedIndexBuilder.traverse(directory, threadedInvertedIndex);
-            				threadedIndexBuilder.finish();
-            			}
-            		}
-            	}
-            	else //if input flag has no value
-            	{
-            		System.err.println("No directory entered, please enter valid directory");
-            	}	
-            }
-            //if args has no input flag
-            else
-            {
-            	System.err.println("No directory found, please enter a directory");
-            }
-            
-            
-            
-            /**index = file name to print to*/
-            if( argumentParser.hasFlag(INDEX_FLAG) )
-            {
-            	outputFile = Paths.get(argumentParser.getOrDefault(INDEX_FLAG, INDEX_DEFAULT));
-            	if ( !outputFile.isAbsolute() )
-            	{
-            		System.err.println("Invalid file");
-            	}
 
-            	if ( !threaded )
-            	{
-            		invertedIndex.writeIndexToFile(outputFile.toString());
-            	}
-            	else if ( threaded )
-            	{
-            		threadedInvertedIndex.writeIndexToFile(outputFile.toString());
-            	}
-            }
-            
-            
-            /**query = file name to obtain queries from*/
-            if ( argumentParser.hasFlag(QUERIES_FLAG) )
-            {
-            	if ( argumentParser.getValue(QUERIES_FLAG) != null )
-            	{
-            		queriesFile = Paths.get(argumentParser.getValue(QUERIES_FLAG));
-            		//if queries flag is not valid
-            		if ( !Files.isReadable(queriesFile) )
-            		{
-            			System.err.println("Invalid query file");
-            		}
-            		else
-            		{
-            			if ( !threaded )
-            			{
-            				//parses files for queries
-                			queryParser.parseFile(queriesFile.toString());
-            			}
-            			else if ( threaded )
-            			{
-            				threadedQueryParser.parseFile(queriesFile.toString());
-            				threadedQueryParser.finish();
-            			}
-            		}
-            	}
-            }
-            
-            
-            /**results = file name to print query results to*/
-            if ( argumentParser.hasFlag(RESULTS_FLAG) )
-            {
-            	resultsFile = Paths.get(argumentParser.getOrDefault(RESULTS_FLAG, RESULTS_DEFAULT));
-            	if ( !resultsFile.isAbsolute() )
-            	{
-            		System.err.println("Invalid results file");
-            	}
+        	/**index = file name to print to*/
+        	if( argumentParser.hasFlag(INDEX_FLAG) )
+        	{
+        		outputFile = Paths.get(argumentParser.getOrDefault(INDEX_FLAG, INDEX_DEFAULT));
+        		if ( !outputFile.isAbsolute() )
+        		{
+        			System.err.println("Invalid file");
+        		}
+        		invertedIndex.writeIndexToFile(outputFile.toString());
+        	}
 
-            	if ( !threaded )
-            	{
-            		queryParser.writeToFile(resultsFile.toString());
-            	}
-            	else if ( threaded )
-            	{
-            		threadedQueryParser.writeToFile(resultsFile.toString());
-            	}
-            }         
-            
 
-        } catch ( NullPointerException e ) { 
+        	/**results = file name to print query results to*/
+        	if ( argumentParser.hasFlag(RESULTS_FLAG) )
+        	{
+        		resultsFile = Paths.get(argumentParser.getOrDefault(RESULTS_FLAG, RESULTS_DEFAULT));
+        		if ( !resultsFile.isAbsolute() )
+        		{
+        			System.err.println("Invalid results file");
+        		}
+        		queryParser.writeToFile(resultsFile.toString());
+        	}         
+
+
+        } catch( NullPointerException e ) { 
         	System.err.println("No input found");
         } 
-    }
-    
-    /* TODO Should help you pass the benchmark
-    public void main(String [] args) {
-        InvertedIndex index = null;
-        AbstractQueryParser parser = null;
-        
-        if (multithreading) {
-            ThreadedInvertedIndex threaded = new ThreadedInvertedIndex();
-            index = threaded;
-            
-            threadedIndexBuilder = new ThreadedIndexBuilder(numberOfThreads);
-            threadedQueryParser = new ThreadedQueryParser(threadedInvertedIndex, numberOfThreads);
-            
-            if (build) {
-                multithreaded build
-                finish
-            }
-            
-            if (search) {
-                multithreaded search
-                finish
-            }
 
-            threadedIndexBuilder.shutdown();
-            threadedQueryParser.shutdown();
-        }
-        else {
-            index = new InvertedIndex();
-            parser = new QueryParser();
-            
-            if (build) {
-                single-threaded build
-            }
-            
-            if (search) {
-                single-threaded seach
-            }
-        }
-        
-        
-        if (printing index) {
-            index.writeIndexToFile(...)
-        }
-        
-        if (printing search results) {
-            parser.writeToFile(...)
-        }
-    }
-    */    
-    
-    
+    }      
     
     
 }

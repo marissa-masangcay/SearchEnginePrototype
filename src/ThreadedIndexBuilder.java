@@ -13,7 +13,6 @@ public class ThreadedIndexBuilder {
 	/** Work queue used to handle multithreading for this class. */
 	private final WorkQueue workers;
 	private static final Logger logger = LogManager.getLogger();
-	private int pending; // TODO Move pending into work queue
 	
 	
 	/**
@@ -22,7 +21,6 @@ public class ThreadedIndexBuilder {
      */
     public ThreadedIndexBuilder(int numberOfThreads) {
         workers = new WorkQueue(numberOfThreads);  
-        pending = 0;
     }
     
     /**
@@ -32,7 +30,6 @@ public class ThreadedIndexBuilder {
      */
     public synchronized void shutdown() {
         logger.debug("Shutting down");
-        finish();
         workers.shutdown();
     }
     
@@ -42,42 +39,8 @@ public class ThreadedIndexBuilder {
 	 * down the work queue.
 	 */
 	public synchronized void finish() {
-		try {
-			while ( pending > 0 ) {
-				logger.debug("Waiting until finished");
-				this.wait();
-			}
-		}
-		catch ( InterruptedException e ) {
-			logger.debug("Finish interrupted", e);
-		}
-	}
-	
-	/**
-	 * Indicates that we now have additional "pending" work to wait for. We
-	 * need this since we can no longer call join() on the threads. (The
-	 * threads keep running forever in the background.)
-	 *
-	 * We made this a synchronized method in the outer class, since locking
-	 * on the "this" object within an inner class does not work.
-	 */
-	private synchronized void incrementPending() {
-		pending++;
-		logger.debug("Pending is now {}", pending);
-	}
-	
-	
-	/**
-	 * Indicates that we now have one less "pending" work, and will notify
-	 * any waiting threads if we no longer have any more pending work left.
-	 */
-	private synchronized void decrementPending() {
-		pending--;
-		logger.debug("Pending is now {}", pending);
-
-		if ( pending <= 0 ) {
-			this.notifyAll();
-		}
+		logger.debug("Finishing");
+		workers.finish();
 	}
 	
 	
@@ -116,30 +79,22 @@ public class ThreadedIndexBuilder {
 
 		private Path file;
 		private InvertedIndex invertedIndex;
-		private final ReadWriteLock lock;
 
-		public FileMinion(Path file, ThreadedInvertedIndex invertedIndex) {
+		public FileMinion(Path file, InvertedIndex invertedIndex) {
 			logger.debug("Minion created for {}", file);
 			this.file = file;
 			this.invertedIndex = invertedIndex;
-			this.lock = new ReadWriteLock();
-			incrementPending();
 		}
 
 		@Override
 		public void run() {
 				try {
-					// TODO Make this InvertedIndex local = new InvertedIndex();
-					ThreadedInvertedIndex local = new ThreadedInvertedIndex();
-					lock.lockReadOnly(); // TODO Remove locks
+					InvertedIndex local = new InvertedIndex();
 					InvertedIndexBuilder.parseFile(file.toString(), local);
 					invertedIndex.addAll(local);
-					lock.unlockReadOnly();
 				} catch ( IOException e ) {
-					// TODO No stack trace
-					e.printStackTrace();
+					System.err.println("Error in work queue at  Threaded Inverted Index parseFile");
 				}
-				decrementPending();
 			}
 		}
 
