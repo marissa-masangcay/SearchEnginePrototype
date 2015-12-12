@@ -93,7 +93,7 @@ public class ThreadedIndexBuilder {
 					InvertedIndexBuilder.parseFile(file.toString(), local);
 					invertedIndex.addAll(local);
 				} catch ( IOException e ) {
-					System.err.println("Error in work queue at  Threaded Inverted Index parseFile");
+					System.err.println("Error in work queue at Threaded Inverted Index parseFile");
 				}
 			}
 		}

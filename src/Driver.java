@@ -116,6 +116,7 @@ public class Driver {
         ThreadedQueryParser threadedQueryParser;
                
         String directoryToTraverse = null;
+        String url = null;
         
         Path directory = null;
         Path outputFile = null;
@@ -128,7 +129,7 @@ public class Driver {
 
         	/**thread = number of threads to use*/
         	/** if multi-threaded */
-        	if ( argumentParser.hasFlag(THREAD_FLAG) )
+        	if ( argumentParser.hasFlag(THREAD_FLAG) || argumentParser.hasFlag(SEED_FLAG))
         	{
         		try {
         			numberOfThreads = Integer.parseInt(argumentParser.getValue(THREAD_FLAG));
@@ -143,6 +144,8 @@ public class Driver {
         			numberOfThreads = THREAD_DEFAULT;
         		}
 
+        		url = argumentParser.getValue(SEED_FLAG);
+        		
         		threadedInvertedIndex = new ThreadedInvertedIndex();
         		invertedIndex = threadedInvertedIndex;
         		threadedIndexBuilder = new ThreadedIndexBuilder(numberOfThreads);
