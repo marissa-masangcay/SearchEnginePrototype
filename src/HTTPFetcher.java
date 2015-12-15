@@ -41,7 +41,7 @@ public class HTTPFetcher {
 	 * @throws IOException
 	 * @throws UnknownHostException
 	 */
-	public static List<String> fetchLines(URL url, String request)
+	public static ArrayList<String> fetchLines(URL url, String request)
 	        throws UnknownHostException, IOException
 	{
 	    ArrayList<String> lines = new ArrayList<>();
@@ -58,6 +58,7 @@ public class HTTPFetcher {
             String line = null;
 
             while ((line = reader.readLine()) != null) {
+            	HTMLCleaner.cleanHTML(line);
                 lines.add(line);
             }
         }

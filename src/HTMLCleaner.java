@@ -68,25 +68,46 @@ public class HTMLCleaner {
      *            plain text without html tags
      * @return list of parsed words
      */
-    public static ThreadedInvertedIndex parseWords(String text) {
-        //ArrayList<String> words = new ArrayList<String>();
-    	ThreadedInvertedIndex invertedIndex = new ThreadedInvertedIndex();
+//    public static ThreadedInvertedIndex parseWords(String text) {
+//        //ArrayList<String> words = new ArrayList<String>();
+//    	ThreadedInvertedIndex invertedIndex = new ThreadedInvertedIndex();
+//    	QueryParser queryParser = new QueryParser(invertedIndex);
+//        text = text.replaceAll(CLEAN_REGEX, "").toLowerCase();
+//        
+//        int position = 1;
+//
+//        for (String word : text.split(SPLIT_REGEX)) {
+//            word = word.trim();
+//
+//            if (!word.isEmpty()) {
+//                //words.add(word);
+//            	//invertedIndex.add(word, text, position);
+//            	try {
+//					queryParser.parseFile(word);
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}	
+//            }
+//            position++; 
+//        }
+//
+//        return invertedIndex;
+//    }
+	
+	public static ArrayList<String> parseWords(String text) {
+        ArrayList<String> words = new ArrayList<String>();
         text = text.replaceAll(CLEAN_REGEX, "").toLowerCase();
-        
-        int position = 1;
 
         for (String word : text.split(SPLIT_REGEX)) {
             word = word.trim();
 
             if (!word.isEmpty()) {
-                //words.add(word);
-            	invertedIndex.add(word, text, position);
-            	
+                words.add(word);	
             }
-            position++; 
         }
 
-        return invertedIndex;
+        return words;
     }
 
     /**
@@ -108,92 +129,44 @@ public class HTMLCleaner {
         return text;
     }
 
-//    /**
-//     * Fetches the webpage at the provided URL by opening a socket, sending an
-//     * HTTP request, removing the headers, and returning the resulting HTML
-//     * code.
-//     *
-//     * You can use the code provided in class if you prefer.
-//     *
-//     * Please note this method should not throw any exceptions.
-//     *
-//     * @param link
-//     *            webpage to download
-//     * @return html code
-//     */
-//    public static String fetchHTML(String link) {
-//        // TODO Fill in and fix return.
-//    	try {
-//			URL target = new URL(link);
-//			String request = craftHTTPRequest(target, HTTP.GET);
-//			List<String> lines = fetchLines(target, request);
-//			
-//			int start = 0;
-//			int end = lines.size();
-//			
-//			while (!lines.get(start).trim().isEmpty() && start<end)
-//			{
-//				start++;
-//			}
-//			
-//			Map<String, String> fields = parseHeaders(lines.subList(0, start+1));
-//			String type = fields.get("Content-Type");
-//			
-//			if (type != null && type.toLowerCase().contains("html"))
-//			{
-//				return String.join(System.lineSeparator(), lines.subList(start+1, end));
-//			}
-//			
-//			return null;
-//		} catch (MalformedURLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (UnknownHostException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//        return null;
-//    }
-//    
-//    /**
-//	 * Will connect to the web server and fetch the URL using the HTTP
-//     * request provided. It would be more efficient to operate on each
-//     * line as returned instead of storing the entire result as a list.
-//     *
-//	 * @param url - url to fetch
-//	 * @param request - full HTTP request
-//	 *
-//	 * @return the lines read from the web server
-//	 *
-//	 * @throws IOException
-//	 * @throws UnknownHostException
-//	 */
-//	public static List<String> fetchLines(URL url, String request)
-//	        throws UnknownHostException, IOException
-//	{
-//	    ArrayList<String> lines = new ArrayList<>();
-//
-//        try (
-//            Socket socket = new Socket(url.getHost(), PORT);
-//            BufferedReader reader = new BufferedReader(
-//                    new InputStreamReader(socket.getInputStream()));
-//            PrintWriter writer = new PrintWriter(socket.getOutputStream());
-//        ) {
-//            writer.println(request);
-//            writer.flush();
-//
-//            String line = null;
-//
-//            while ((line = reader.readLine()) != null) {
-//                lines.add(line);
-//            }
-//        }
-//
-//	    return lines;
-//	}
+
+    
+    /**
+	 * Will connect to the web server and fetch the URL using the HTTP
+     * request provided. It would be more efficient to operate on each
+     * line as returned instead of storing the entire result as a list.
+     *
+	 * @param url - url to fetch
+	 * @param request - full HTTP request
+	 *
+	 * @return the lines read from the web server
+	 *
+	 * @throws IOException
+	 * @throws UnknownHostException
+	 */
+	public static List<String> fetchLines(URL url, String request)
+	        throws UnknownHostException, IOException
+	{
+	    ArrayList<String> lines = new ArrayList<>();
+
+        try (
+            Socket socket = new Socket(url.getHost(), PORT);
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream()));
+            PrintWriter writer = new PrintWriter(socket.getOutputStream());
+        ) {
+            writer.println(request);
+            writer.flush();
+
+            String line = null;
+
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        }
+
+	    return lines;
+	}
 //
 //	 
 //    /**

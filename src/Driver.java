@@ -153,6 +153,7 @@ public class Driver {
         		threadedIndexBuilder = new ThreadedIndexBuilder(numberOfThreads);
         		threadedQueryParser = new ThreadedQueryParser(threadedInvertedIndex, numberOfThreads);
         		queryParser = threadedQueryParser;
+        		webCrawler = new Search(threadedInvertedIndex);
 
         		if ( argumentParser.hasFlag(INPUT_FLAG) )
         		{
@@ -184,8 +185,8 @@ public class Driver {
         		
         		if ( argumentParser.hasFlag(SEED_FLAG))
         		{
-        			webCrawler = new Search(url, threadedInvertedIndex);
-        			// webCrawler.run(url);
+        			webCrawler.startSearch(url);
+        			webCrawler.finish();
         		}
 
 
@@ -207,6 +208,7 @@ public class Driver {
 
         		threadedIndexBuilder.shutdown();
         		threadedQueryParser.shutdown();
+        		webCrawler.shutdown();
         	}
         	else{
 
