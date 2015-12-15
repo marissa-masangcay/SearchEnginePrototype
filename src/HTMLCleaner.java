@@ -63,28 +63,31 @@ public class HTMLCleaner {
      * Parses the provided plain text (already cleaned of HTML tags) into
      * individual words.
      *
-     * THIS METHOD IS PROVIDED FOR YOU. DO NOT MODIFY.
      *
      * @param text
      *            plain text without html tags
      * @return list of parsed words
      */
-    public static ArrayList<String> parseWords(String text, InvertedIndex invertedIndex) {
-        ArrayList<String> words = new ArrayList<String>();
+    public static ThreadedInvertedIndex parseWords(String text) {
+        //ArrayList<String> words = new ArrayList<String>();
+    	ThreadedInvertedIndex invertedIndex = new ThreadedInvertedIndex();
         text = text.replaceAll(CLEAN_REGEX, "").toLowerCase();
+        
+        int position = 1;
 
         for (String word : text.split(SPLIT_REGEX)) {
             word = word.trim();
 
             if (!word.isEmpty()) {
                 //words.add(word);
+            	invertedIndex.add(word, text, position);
             	
             }
-            
+            position++;
             
         }
 
-        return words;
+        return invertedIndex;
     }
 
     /**

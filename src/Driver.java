@@ -114,6 +114,8 @@ public class Driver {
         ThreadedInvertedIndex threadedInvertedIndex;
         ThreadedIndexBuilder threadedIndexBuilder;
         ThreadedQueryParser threadedQueryParser;
+        
+        Search webCrawler;
                
         String directoryToTraverse = null;
         String url = null;
@@ -174,9 +176,16 @@ public class Driver {
         			}
         		}
         		//if args has no input flag
-        		else
+//        		else
+//        		{
+//        			System.err.println("No directory found, please enter a directory");
+//        		}
+        		
+        		
+        		if ( argumentParser.hasFlag(SEED_FLAG))
         		{
-        			System.err.println("No directory found, please enter a directory");
+        			webCrawler = new Search(url, threadedInvertedIndex);
+        			//webCrawler.run(url);
         		}
 
 
