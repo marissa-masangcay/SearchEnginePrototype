@@ -28,7 +28,7 @@ public class ThreadedIndexBuilder {
      * point, all additional calls to {@link #parseTextFiles(Path, String)} will
      * no longer work.
      */
-    public synchronized void shutdown() {
+    public synchronized void shutdown() { // TODO Remove synchronized
         logger.debug("Shutting down");
         workers.shutdown();
     }
@@ -38,7 +38,7 @@ public class ThreadedIndexBuilder {
 	 * work is done. This is useful for resetting the counters or shutting
 	 * down the work queue.
 	 */
-	public synchronized void finish() {
+	public synchronized void finish() { // TODO Remove synchronized
 		logger.debug("Finishing");
 		workers.finish();
 	}
@@ -88,14 +88,14 @@ public class ThreadedIndexBuilder {
 
 		@Override
 		public void run() {
-				try {
-					InvertedIndex local = new InvertedIndex();
-					InvertedIndexBuilder.parseFile(file.toString(), local);
-					invertedIndex.addAll(local);
-				} catch ( IOException e ) {
-					System.err.println("Error in work queue at Threaded Inverted Index parseFile");
-				}
+			try {
+				InvertedIndex local = new InvertedIndex();
+				InvertedIndexBuilder.parseFile(file.toString(), local);
+				invertedIndex.addAll(local);
+			} catch ( IOException e ) {
+				System.err.println("Error in work queue at Threaded Inverted Index parseFile");
 			}
 		}
+	}
 
 }

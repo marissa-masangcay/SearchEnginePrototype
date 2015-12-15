@@ -24,8 +24,9 @@ public class WorkQueue {
 	public static final int DEFAULT = 5;
 	
 	private static final Logger logger = LogManager.getLogger();
+	
+	/** TODO Javadoc */
 	private int pending;
-
 
 	/**
 	 * Starts a work queue with the default number of threads.
@@ -33,6 +34,8 @@ public class WorkQueue {
 	 */
 	public WorkQueue() {
 		this(DEFAULT);
+		
+		// TODO Move this to the other constructor
 		pending = 0;
 	}
 
@@ -89,7 +92,7 @@ public class WorkQueue {
 	 * down the work queue.
 	 */
 	public synchronized void finish() {
-		synchronized(queue)
+		synchronized (queue)
 		{
 			try {
 				while ( pending > 0 ) {
@@ -113,7 +116,6 @@ public class WorkQueue {
 		return workers.length;
 	}
 	
-	
 	/**
 	 * Indicates that we now have additional "pending" work to wait for. We
 	 * need this since we can no longer call join() on the threads. (The
@@ -129,7 +131,6 @@ public class WorkQueue {
 			logger.debug("Pending is now {}", pending);
 		}
 	}
-	
 	
 	/**
 	 * Indicates that we now have one less "pending" work, and will notify
@@ -147,7 +148,6 @@ public class WorkQueue {
 		}
 	}
 
-	
 	/**
 	 * Waits until work is available in the work queue. When work is found, will
 	 * remove the work from the queue and run it. If a shutdown is detected,

@@ -3,6 +3,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+// TODO Look at and address warnings.
+// TODO Looks like a mix of tabs and spaces.
 
 /**
  * This software driver class provides a consistent entry point for the search
@@ -270,7 +272,7 @@ public class Driver {
         	if( argumentParser.hasFlag(INDEX_FLAG) )
         	{
         		outputFile = Paths.get(argumentParser.getOrDefault(INDEX_FLAG, INDEX_DEFAULT));
-        		if ( !outputFile.isAbsolute() )
+        		if ( !outputFile.isAbsolute() ) // TODO Can remove.
         		{
         			System.err.println("Invalid file");
         		}
@@ -282,7 +284,7 @@ public class Driver {
         	if ( argumentParser.hasFlag(RESULTS_FLAG) )
         	{
         		resultsFile = Paths.get(argumentParser.getOrDefault(RESULTS_FLAG, RESULTS_DEFAULT));
-        		if ( !resultsFile.isAbsolute() )
+        		if ( !resultsFile.isAbsolute() ) // TODO Can remove.
         		{
         			System.err.println("Invalid results file");
         		}

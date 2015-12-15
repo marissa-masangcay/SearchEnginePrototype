@@ -32,8 +32,10 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 	private final ReadWriteLock lock; 
 
 
-	/**Initializes a Query Parser object as well as an empty results map
-		  and an inverted index*/
+	/**
+	 * Initializes a Query Parser object as well as an empty results map
+	 * and an inverted index
+	 */
 	public ThreadedQueryParser(ThreadedInvertedIndex inputInvertedIndex, int numberOfThreads)
 	{
 		results = new LinkedHashMap<String, List<SearchResult>>();
@@ -48,7 +50,7 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 	 * work is done. This is useful for resetting the counters or shutting
 	 * down the work queue.
 	 */
-	public synchronized void finish() {
+	public synchronized void finish() { // TODO Remove synchronized
 		logger.debug("Finishing");
 		workers.finish();
 	}
@@ -58,7 +60,7 @@ public class ThreadedQueryParser extends AbstractQueryParser {
 	 * point, all additional calls to {@link #parseTextFiles(Path, String)} will
 	 * no longer work.
 	 */
-	public synchronized void shutdown() {
+	public synchronized void shutdown() { // TODO Remove synchronized
 		logger.debug("Shutting down");
 		workers.shutdown();
 	}
