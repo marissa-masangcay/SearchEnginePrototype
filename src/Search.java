@@ -13,6 +13,8 @@ public class Search {
 	
 	//Pattern..addAll
 	
+	//test
+	
 	private HashSet<URL> linkSet;
 	private final WorkQueue workers;
 	private final ReadWriteLock lock;

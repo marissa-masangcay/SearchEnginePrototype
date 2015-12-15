@@ -83,8 +83,7 @@ public class HTMLCleaner {
             	invertedIndex.add(word, text, position);
             	
             }
-            position++;
-            
+            position++; 
         }
 
         return invertedIndex;
